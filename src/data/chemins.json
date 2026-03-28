@@ -1,0 +1,366 @@
+{
+  "Acquisition clients": {
+    "plan1": {
+      "titre": "Les 3 leviers immédiats",
+      "horizon": "7 jours",
+      "icon": "🎯",
+      "couleur": "blue",
+      "bullets": [
+        "Identifier tes 2 sources d'acquisition les plus rapides à activer",
+        "Rédiger le message d'approche qui déclenche des réponses",
+        "Décrocher tes 3 premiers RDV qualifiés cette semaine"
+      ],
+      "resultat": "Dans 7 jours, tu as tes premiers prospects en pipeline. La preuve que ça marche pour toi.",
+      "etapes": [
+        {
+          "titre": "Diagnostiquer ton acquisition actuelle",
+          "description": "Où en es-tu vraiment ? Identifier tes leviers sous-exploités en moins d'une heure.",
+          "type": "video"
+        },
+        {
+          "titre": "Rédiger ton premier message",
+          "description": "Le script d'approche qui fonctionne pour ton secteur et ton profil.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Activer et mesurer",
+          "description": "Envoyer, tracker, ajuster. Les 3 premières actions concrètes à faire aujourd'hui.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan2": {
+      "titre": "Ton premier système d'acquisition",
+      "horizon": "15 jours",
+      "icon": "⚡",
+      "couleur": "gold",
+      "recommande": true,
+      "bullets": [
+        "Valider 2 canaux d'acquisition adaptés à ton profil et ton secteur",
+        "Construire ton tunnel de conversion de bout en bout",
+        "Générer tes premiers leads qualifiés sans prospecter manuellement"
+      ],
+      "resultat": "En 15 jours, un pipeline qui se remplit en continu. C'est la base que tous nos entrepreneurs posent en premier.",
+      "etapes": [
+        {
+          "titre": "Choisir et valider tes 2 canaux",
+          "description": "La méthode pour ne pas se disperser et aller vite sur ce qui marche pour ton profil.",
+          "type": "video"
+        },
+        {
+          "titre": "Construire le tunnel",
+          "description": "De la première impression au prospect qualifié : chaque étape optimisée pour convertir.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Passer en mode automatique",
+          "description": "Mettre le système en route et mesurer tes premiers résultats à J+7.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan3": {
+      "titre": "Résultats accélérés avec Max",
+      "horizon": "Accompagnement direct",
+      "icon": "🚀",
+      "couleur": "purple",
+      "rdv": true,
+      "bullets": [
+        "Un plan d'acquisition taillé pour ton secteur, conçu avec un coach",
+        "Accès aux méthodes testées sur 3 000+ entrepreneurs depuis 10 ans",
+        "Résultats visibles en semaines avec un suivi hebdomadaire"
+      ],
+      "resultat": "30 minutes avec l'un de nos conseillers pour te donner un plan précis et savoir si le programme est fait pour toi.",
+      "etapes": [
+        {
+          "titre": "Appel stratégique offert",
+          "description": "Un conseiller analyse ton profil et te propose un plan personnalisé.",
+          "type": "action"
+        },
+        {
+          "titre": "Intégration au programme",
+          "description": "Accès immédiat aux formations, au coaching et à la communauté.",
+          "type": "video"
+        },
+        {
+          "titre": "Premiers résultats mesurables",
+          "description": "Nos entrepreneurs voient leurs premiers résultats en 3 à 8 semaines.",
+          "type": "action"
+        }
+      ]
+    }
+  },
+  "Rentabilité": {
+    "plan1": {
+      "titre": "Stopper les fuites cette semaine",
+      "horizon": "7 jours",
+      "icon": "🔍",
+      "couleur": "blue",
+      "bullets": [
+        "Identifier tes 3 principaux postes de perte en moins de 2 heures",
+        "Repérer immédiatement tes clients non rentables",
+        "Prendre une première décision tarifaire concrète"
+      ],
+      "resultat": "En 7 jours, tu sais où part ton argent. Et tu as stoppé au moins une fuite.",
+      "etapes": [
+        {
+          "titre": "L'audit express de rentabilité",
+          "description": "Méthode pour identifier en 2h où tu perds de l'argent sans le savoir.",
+          "type": "video"
+        },
+        {
+          "titre": "Lire tes chiffres autrement",
+          "description": "Les 5 indicateurs qui te disent la vérité sur ta marge réelle.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Première action concrète",
+          "description": "Identifier un client ou un contrat à repriser ou sortir. Faire le premier pas.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan2": {
+      "titre": "Reconstruire tes marges",
+      "horizon": "15 jours",
+      "icon": "📈",
+      "couleur": "gold",
+      "recommande": true,
+      "bullets": [
+        "Restructurer ta grille tarifaire pour refléter ta vraie valeur",
+        "Éliminer les clients chronophages qui plombent ta marge réelle",
+        "Mettre en place un pilotage de rentabilité par client et par offre"
+      ],
+      "resultat": "En 15 jours, tes marges nettes progressent sans vendre plus. Tu travailles mieux, pas plus.",
+      "etapes": [
+        {
+          "titre": "Repriser par la valeur",
+          "description": "Comment revaloriser tes offres sans perdre tes bons clients. Méthode testée sur 300+ entrepreneurs.",
+          "type": "video"
+        },
+        {
+          "titre": "Trier ta base clients",
+          "description": "Identifier tes clients A (rentables) et tes clients C (à sortir). Agir sans culpabilité.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Piloter chaque semaine",
+          "description": "Le tableau de bord de rentabilité qui te dit en 10 minutes si tu es en bonne santé.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan3": {
+      "titre": "Résultats accélérés avec Max",
+      "horizon": "Accompagnement direct",
+      "icon": "💎",
+      "couleur": "purple",
+      "rdv": true,
+      "bullets": [
+        "Un audit de rentabilité complet réalisé avec un expert",
+        "Un plan de repricing et d'optimisation taillé pour ton secteur",
+        "Un suivi hebdomadaire jusqu'aux premiers résultats mesurables"
+      ],
+      "resultat": "30 minutes avec l'un de nos conseillers pour te donner un plan précis et savoir si le programme est fait pour toi.",
+      "etapes": [
+        {
+          "titre": "Appel stratégique offert",
+          "description": "Un conseiller analyse ta structure et t'identifie les 3 leviers prioritaires.",
+          "type": "action"
+        },
+        {
+          "titre": "Intégration au programme",
+          "description": "Accès immédiat aux formations, au coaching et à la communauté.",
+          "type": "video"
+        },
+        {
+          "titre": "Premiers résultats mesurables",
+          "description": "Nos entrepreneurs récupèrent souvent 30 à 50K de marge dans les 90 premiers jours.",
+          "type": "action"
+        }
+      ]
+    }
+  },
+  "Équipe & délégation": {
+    "plan1": {
+      "titre": "Récupérer 5h cette semaine",
+      "horizon": "7 jours",
+      "icon": "⏱️",
+      "couleur": "blue",
+      "bullets": [
+        "Identifier les 3 tâches que tu dois absolument arrêter de faire maintenant",
+        "Rédiger ton premier process délégable en moins de 30 minutes",
+        "Faire ta première vraie délégation et mesurer le résultat"
+      ],
+      "resultat": "En 7 jours, tu récupères du temps. Et tu réalises que déléguer ne baisse pas la qualité.",
+      "etapes": [
+        {
+          "titre": "L'audit de ton temps",
+          "description": "Identifier en 1h les tâches qui te volent ta semaine et que tu ne devrais plus faire.",
+          "type": "video"
+        },
+        {
+          "titre": "Documenter en 30 minutes",
+          "description": "Le format ultra-simple de process qui permet à n'importe qui de faire ce que tu fais.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Déléguer et lâcher prise",
+          "description": "La première vraie délégation : confier, fixer un critère de réussite, ne pas interférer.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan2": {
+      "titre": "Ton équipe qui avance sans toi",
+      "horizon": "15 jours",
+      "icon": "🏗️",
+      "couleur": "gold",
+      "recommande": true,
+      "bullets": [
+        "Clarifier les rôles pour que chacun sache quoi faire sans te demander",
+        "Mettre en place un rituel de management hebdo en 30 minutes",
+        "Créer ton premier playbook pour onboarder n'importe qui en 1 semaine"
+      ],
+      "resultat": "En 15 jours, ton équipe avance seule sur l'essentiel. Tu valides, tu ne gères plus.",
+      "etapes": [
+        {
+          "titre": "Clarifier les rôles",
+          "description": "Construire l'organigramme de responsabilités qui met fin aux zones grises et aux questions répétées.",
+          "type": "video"
+        },
+        {
+          "titre": "Le rituel hebdomadaire",
+          "description": "Le format de réunion en 30 min qui aligne l'équipe et supprime 80% des sollicitations.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Créer le playbook",
+          "description": "Le document qui permet à n'importe qui de rejoindre ton équipe et performer rapidement.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan3": {
+      "titre": "Résultats accélérés avec Max",
+      "horizon": "Accompagnement direct",
+      "icon": "🌟",
+      "couleur": "purple",
+      "rdv": true,
+      "bullets": [
+        "Un diagnostic complet de ton organisation par un expert en délégation",
+        "Un plan de restructuration taillé pour ta taille d'équipe",
+        "Un suivi hebdomadaire jusqu'à ce que ton équipe tourne sans toi"
+      ],
+      "resultat": "30 minutes avec l'un de nos conseillers pour te donner un plan précis et savoir si le programme est fait pour toi.",
+      "etapes": [
+        {
+          "titre": "Appel stratégique offert",
+          "description": "Un conseiller analyse ton organisation et t'identifie les blocages prioritaires.",
+          "type": "action"
+        },
+        {
+          "titre": "Intégration au programme",
+          "description": "Accès immédiat aux formations, au coaching et à la communauté.",
+          "type": "video"
+        },
+        {
+          "titre": "Premiers résultats mesurables",
+          "description": "Nos entrepreneurs récupèrent en moyenne 12h par semaine dans les 60 premiers jours.",
+          "type": "action"
+        }
+      ]
+    }
+  },
+  "Systèmes & organisation": {
+    "plan1": {
+      "titre": "Sortir du chaos en 7 jours",
+      "horizon": "7 jours",
+      "icon": "🧭",
+      "couleur": "blue",
+      "bullets": [
+        "Identifier les 2 process les plus urgents à documenter maintenant",
+        "Choisir et déployer 1 outil simple (pas juste l'installer)",
+        "Créer ton tableau de bord avec tes 3 métriques prioritaires"
+      ],
+      "resultat": "En 7 jours, tu as posé les premières bases. L'entreprise commence à sortir de ta tête.",
+      "etapes": [
+        {
+          "titre": "Cartographier le chaos",
+          "description": "Identifier en 1h les 2 process qui font le plus mal et les traiter en priorité.",
+          "type": "video"
+        },
+        {
+          "titre": "Choisir et déployer l'outil",
+          "description": "La méthode pour choisir l'outil adapté et le faire adopter par toute l'équipe.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Créer le tableau de bord",
+          "description": "Les 3 métriques clés qui te disent chaque lundi si tout va dans la bonne direction.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan2": {
+      "titre": "Tes 5 process clés en place",
+      "horizon": "15 jours",
+      "icon": "⚙️",
+      "couleur": "gold",
+      "recommande": true,
+      "bullets": [
+        "Documenter et automatiser tes 5 workflows principaux de bout en bout",
+        "Connecter CRM, facturation et gestion de projet dans un écosystème cohérent",
+        "Former ton équipe pour que les process tiennent dans la durée"
+      ],
+      "resultat": "En 15 jours, ton entreprise a un système nerveux. Les informations circulent, les erreurs diminuent.",
+      "etapes": [
+        {
+          "titre": "Cartographier les 5 workflows",
+          "description": "Les process incontournables à standardiser pour passer à l'échelle sans chaos.",
+          "type": "video"
+        },
+        {
+          "titre": "Intégrer la stack",
+          "description": "Comment connecter tes outils pour qu'ils parlent entre eux sans friction ni ressaisie.",
+          "type": "lecture"
+        },
+        {
+          "titre": "Former et ancrer",
+          "description": "Le plan de formation pour que les nouveaux process tiennent vraiment dans la durée.",
+          "type": "action"
+        }
+      ]
+    },
+    "plan3": {
+      "titre": "Résultats accélérés avec Max",
+      "horizon": "Accompagnement direct",
+      "icon": "🤖",
+      "couleur": "purple",
+      "rdv": true,
+      "bullets": [
+        "Un audit complet de ta stack et de tes process par un expert",
+        "Un plan de structuration priorisé selon ton niveau et tes objectifs",
+        "Un suivi jusqu'à ce que ton entreprise tourne en autonomie réelle"
+      ],
+      "resultat": "30 minutes avec l'un de nos conseillers pour te donner un plan précis et savoir si le programme est fait pour toi.",
+      "etapes": [
+        {
+          "titre": "Appel stratégique offert",
+          "description": "Un conseiller analyse ta stack actuelle et t'identifie les 3 chantiers prioritaires.",
+          "type": "action"
+        },
+        {
+          "titre": "Intégration au programme",
+          "description": "Accès immédiat aux formations, au coaching et à la communauté.",
+          "type": "video"
+        },
+        {
+          "titre": "Premiers résultats mesurables",
+          "description": "Nos entrepreneurs récupèrent 10 à 15% de capacité productive dans les 30 premiers jours.",
+          "type": "action"
+        }
+      ]
+    }
+  }
+}

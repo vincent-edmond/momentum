@@ -1,0 +1,122 @@
+{
+  "Acquisition clients": {
+    "< 200K": {
+      "p1": "Tu es en dessous de 200K de CA. Ton problème n'est pas ta compétence : c'est ta visibilité. En tant que {secteur}, tu es probablement excellent dans ton métier. Mais les bons clients ne savent pas encore que tu existes.",
+      "p2": "Ton frein, c'est l'acquisition. Concrètement : tu dépends du bouche-à-oreille. Certains mois tu as trop de travail, d'autres tu angoisse. Il n'y a pas de système. Il n'y a que toi, qui cherches.",
+      "p3": "Ce que ça coûte aujourd'hui : tu ne peux pas te projeter à 6 mois. Tu acceptes des missions sous-payées par peur du vide. Et chaque fois que tu dois prospecter, tu perds du temps sur des clients que tu aurais pu livrer.",
+      "p4": "Ce que ton profil révèle : tu as une proposition de valeur réelle. Le problème n'est jamais la qualité de ce que tu fais. C'est que tu n'as pas encore construit le pont entre ce que tu vaux et les clients qui te cherchent. Cette asymétrie se corrige. Vite. Avec la bonne méthode.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : 3 à 5 sources d'acquisition actives, un script de conversion qui tourne sans toi, un CA mensuel prévisible. Ce n'est pas une promesse abstraite. C'est ce que construisent les entrepreneurs qui passent par ce programme."
+    },
+    "200K-500K": {
+      "p1": "Tu fais entre 200K et 500K. Tu as prouvé que ton offre fonctionne. Mais ta croissance plafonne. Ton acquisition repose encore sur ta notoriété personnelle et tes contacts directs.",
+      "p2": "Ton frein, c'est l'acquisition systématique. Tu convertis bien quand tu as des prospects devant toi. Le problème : tu n'as pas de machine pour en générer régulièrement sans y passer 30% de ton temps.",
+      "p3": "Ce que ça coûte : les mois où tu prospectes activement, ton CA remonte. Les mois où tu livres, il baisse. Ce cycle te bloque depuis trop longtemps. Et il va continuer tant que tu n'auras pas un vrai système.",
+      "p4": "Ce que ton profil révèle : tu as déjà les preuves sociales. Tu as des clients satisfaits, des résultats à montrer. Ce qui te manque c'est la machine pour les dupliquer. Et ça, c'est entièrement constructible avec les ressources que tu as déjà.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un système qui génère 15 à 30 leads qualifiés par mois, sans prospection manuelle de ta part. Des entrepreneurs à ton stade ont passé de 350K à 600K en 12 mois avec cette méthode."
+    },
+    "500K-1M": {
+      "p1": "Tu fais entre 500K et 1M. Tu as une vraie entreprise. Mais pour passer au niveau supérieur, ton acquisition ne peut plus reposer sur ta réputation personnelle ou ton réseau direct. Il te faut un actif.",
+      "p2": "Ton frein, c'est le passage de l'acquisition artisanale à l'acquisition industrielle. Tu as 2 à 3 sources qui fonctionnent. Mais elles ne scalent pas. Chaque nouveau client demande encore un effort manuel.",
+      "p3": "Ce que ça coûte : tu es à 1M mais tu sais que tu pourrais être à 2M. La différence tient à un système d'acquisition qui tourne sans toi. Tu as les ressources pour le construire. Il te manque la méthode.",
+      "p4": "Ce que ton profil révèle : tu as le niveau pour scaler. Tu as les marges, la preuve de concept, les ressources pour investir dans un vrai système. La seule variable manquante c'est l'architecture de l'acquisition. Et c'est précisément ce que ce programme construit.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : 2 à 3 canaux qui génèrent des leads qualifiés en automatique, un pipeline prévisible qui ne dépend plus de ta présence. Les entreprises à ton stade qui font ça passent typiquement de 700K à 1,2M dans les 18 mois suivants."
+    },
+    "> 1M": {
+      "p1": "Tu dépasses le million. La question c'est : comment doubler sans doubler ton énergie et tes effectifs ? C'est exactement là que ton acquisition actuelle va te bloquer.",
+      "p2": "Ton frein, c'est l'acquisition à grande échelle. Tu as du CA, tu as une équipe. Mais ton pipeline dépend encore de trop peu de sources ou de trop peu de personnes. Un départ clé, et tout vacille.",
+      "p3": "Ce que ça coûte : chaque nouveau marché, chaque nouveau segment nécessite une intervention directe de ta part. Tu n'as pas encore la machine qui se déploie seule. Et ça te coûte des millions de CA potentiel.",
+      "p4": "Ce que ton profil révèle : tu as une organisation qui peut scaler. Tu as une équipe, des ressources, une marque. Ce qu'il te faut c'est un actif d'acquisition qui ne dépend pas d'une poignée de personnes ou de canaux fragiles.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : les fondations d'un système d'acquisition multi-canal qui peut doubler ton pipeline sans doubler tes effectifs. À ton niveau, chaque point d'amélioration se mesure en centaines de milliers d'euros."
+    }
+  },
+  "Rentabilité": {
+    "< 200K": {
+      "p1": "Tu es en dessous de 200K de CA. Ton enjeu n'est pas le chiffre d'affaires : c'est ce qui reste. En tant que {secteur}, tu travailles probablement beaucoup pour une rémunération qui ne reflète pas vraiment l'effort fourni.",
+      "p2": "Ton frein, c'est la rentabilité. Soit tes prix sont trop bas pour ta valeur réelle, soit tes coûts n'ont jamais été vraiment audités, soit tu acceptes des clients qui te coûtent plus qu'ils ne te rapportent.",
+      "p3": "Ce que ça coûte aujourd'hui : chaque mois tu regardes ton compte en te demandant où est passé l'argent. L'insécurité financière te force à accepter des missions que tu n'aurais pas dû prendre. Tu travailles pour survivre, pas pour croître.",
+      "p4": "Ce que ton profil révèle : le problème n'est pas ton niveau. C'est ton positionnement tarifaire et la structure de tes coûts. Dans 80% des cas à ce stade, une revalorisation tarifaire de 20 à 30% suffit à changer radicalement l'équation. Sans perdre un seul bon client.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : une structure de prix révisée, un audit de tes coûts cachés, un tri de ta base clients par rentabilité réelle. Des entrepreneurs dans ta situation ont doublé leur rémunération nette sans augmenter leur CA."
+    },
+    "200K-500K": {
+      "p1": "Tu fais entre 200K et 500K. Ça paraît confortable vu de l'extérieur. Mais toi tu sais que les marges ne suivent pas le CA. Tu travailles beaucoup pour une rémunération qui ne reflète pas l'effort réel.",
+      "p2": "Ton frein, c'est la rentabilité structurelle. Le problème vient généralement de 3 endroits : un pricing qui n'a pas été revu depuis trop longtemps, des coûts qui ont grandi sans être questionnés, ou des clients chronophages qui plombent ta marge.",
+      "p3": "Ce que ça coûte : tu pourrais diviser ton CA par 2 et doubler ta rentabilité si tu travaillais avec les bons clients aux bons prix. Mais tu n'as pas encore fait ce tri. Et chaque mois qui passe, tu laisses de l'argent sur la table.",
+      "p4": "Ce que ton profil révèle : à ton niveau de CA, les leviers de rentabilité sont souvent évidents une fois qu'on les cherche vraiment. Quelques ajustements tarifaires, 2 à 3 clients retirés du portefeuille, un audit des charges fixes. Le potentiel de marge libérable est souvent de 40 à 60K nets par an.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : une cartographie complète de ta rentabilité par client et par prestation, une stratégie de repricing validée, et une trajectoire claire vers une marge nette qui reflète enfin ta valeur réelle."
+    },
+    "500K-1M": {
+      "p1": "Tu fais entre 500K et 1M. La zone où la rentabilité devient critique. À ce niveau, tu as des charges fixes importantes. Si les marges ne sont pas blindées, chaque mois est stressant même avec un beau CA.",
+      "p2": "Ton frein, c'est l'optimisation de ta structure économique. Des coûts qui n'ont pas été audités depuis 2 à 3 ans, des lignes de charges qui ne sont plus justifiées, et un pricing qui n'a pas évolué avec ta valeur.",
+      "p3": "Ce que ça coûte : tu gagnes peut-être moins net qu'un entrepreneur à 300K bien structuré. La taille de ton entreprise ne se traduit pas encore en liberté financière réelle. Et ça doit changer.",
+      "p4": "Ce que ton profil révèle : à ton stade, 5 points de marge supplémentaires représentent 40 à 50K nets annuels supplémentaires. Sans vendre plus. Juste en regardant les bons chiffres au bon endroit. La plupart des entrepreneurs à ce niveau n'ont jamais fait cet audit sérieusement.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un audit complet de ta structure de coûts, une stratégie tarifaire repositionnée, un pilotage mensuel de ta marge réelle. Les entrepreneurs qui font ce travail dégagent souvent 80 à 150K de marge supplémentaire la première année."
+    },
+    "> 1M": {
+      "p1": "Tu dépasses le million. Maintenant chaque point de marge compte pour des dizaines de milliers d'euros. La rentabilité n'est plus un sujet de survie : c'est un sujet de performance et de patrimoine.",
+      "p2": "Ton frein, c'est la rentabilité à grande échelle. Tu as probablement des contrats ou des gammes entières qui plombent ta marge globale. Et personne dans ton organisation ne se charge vraiment d'optimiser ça systématiquement.",
+      "p3": "Ce que ça coûte : 5 points de marge supplémentaires sur 1M, c'est 50 000 euros nets par an. Sans vendre plus. Juste en structurant mieux. Tu laisses cet argent sur la table chaque année.",
+      "p4": "Ce que ton profil révèle : à ton niveau, l'optimisation de la rentabilité est souvent le levier le plus rapide et le moins coûteux pour augmenter ta valeur patrimoniale. Une entreprise à 1M avec 20% de marge nette vaut 2 à 3 fois plus qu'une à 1M avec 8% de marge.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un audit de rentabilité par gamme, par client et par canal, une stratégie de repricing B2B validée, et les bases d'un pilotage financier qui fait vraiment levier sur ta valeur d'entreprise."
+    }
+  },
+  "Équipe & délégation": {
+    "< 200K": {
+      "p1": "Tu es en dessous de 200K de CA. Tu fais probablement tout, ou presque. C'est normal à ce stade. Mais c'est aussi ce qui t'empêche de grandir. Ton plafond de croissance, c'est ton agenda.",
+      "p2": "Ton frein, c'est la délégation. Pas parce que tu n'as personne. Parce que tu n'as pas encore le système pour confier du travail à quelqu'un d'autre et être certain que ça sera bien fait. Alors tu fais tout toi-même.",
+      "p3": "Ce que ça coûte aujourd'hui : tu ne peux pas prendre plus de clients que ce que tes heures permettent. Tu rates des opportunités. Et tu t'épuises sur des tâches que tu sais que tu ne devrais pas faire.",
+      "p4": "Ce que ton profil révèle : la délégation ne nécessite pas forcément d'embaucher. À ton stade, 3 à 5 tâches récurrentes bien documentées et confiées à un prestataire ou un assistant partiel peuvent libérer 8 à 10 heures par semaine. Ce sont ces heures qui font croître l'entreprise.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un premier poste délégué qui fonctionne vraiment, une checklist de tes tâches à valeur nulle identifiées et transférées, et le début d'une organisation qui peut grandir sans toi au centre de tout."
+    },
+    "200K-500K": {
+      "p1": "Tu fais entre 200K et 500K. Tu as peut-être 1 ou 2 personnes autour de toi. Mais l'essentiel repose encore sur tes épaules. Chaque décision importante passe par toi. Et chaque problème atterrit sur ton bureau.",
+      "p2": "Ton frein, c'est la délégation avec confiance. Ce n'est pas un problème de personnes : c'est un problème de process. Tes collaborateurs ne savent pas encore travailler sans te solliciter parce que tu n'as pas construit les systèmes pour ça.",
+      "p3": "Ce que ça coûte : tu te noies dans l'opérationnel alors que tu devrais être sur la stratégie. Chaque semaine passée à gérer les détails est une semaine de moins sur ce qui fait vraiment croître l'entreprise.",
+      "p4": "Ce que ton profil révèle : le problème n'est pas tes collaborateurs. C'est l'absence de process clairs et d'indicateurs de suivi. Quand on construit les bons outils de délégation, les mêmes personnes performent souvent 2 fois mieux. Le talent est là. Il manque le cadre.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : une organisation où tes collaborateurs prennent des décisions sans te solliciter, un tableau de bord hebdomadaire qui te donne le contrôle sans t'impliquer dans l'exécution, et 10 à 15 heures par semaine libérées pour la stratégie."
+    },
+    "500K-1M": {
+      "p1": "Tu fais entre 500K et 1M. Tu as une équipe. Mais l'entreprise s'arrête quand tu t'arrêtes. Tes collaborateurs sont capables. Mais ils ne peuvent pas encore performer sans toi comme référence constante.",
+      "p2": "Ton frein, c'est la délégation au niveau structurel. À ton stade, le problème n'est plus de recruter : c'est de structurer. Tes gens n'ont pas les bons rôles, les bons outils ou les bonnes métriques pour être vraiment autonomes.",
+      "p3": "Ce que ça coûte : tu travailles probablement 55h par semaine ou plus. Ta croissance est plafonnée par ton énergie personnelle. Et chaque nouveau recrutement crée autant de problèmes qu'il n'en résout, parce que l'organisation n'est pas prête.",
+      "p4": "Ce que ton profil révèle : à ton stade, le levier n'est pas de travailler plus dur. C'est de construire une organisation qui fonctionne avec tes standards, sans toi dans la boucle opérationnelle. C'est une compétence de chef d'entreprise. Pas une question de chance ou de profil.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : une organisation restructurée avec des rôles clairs, des indicateurs de performance par poste, et une réunion hebdomadaire qui remplace 80% de tes interventions directes. Les entrepreneurs qui font ce travail récupèrent 15 à 20h par semaine."
+    },
+    "> 1M": {
+      "p1": "Tu dépasses le million. Tu as une vraie organisation. Mais tu sais que tu es encore trop dans le système. Tu ne peux pas prendre 3 semaines de vacances sans que quelque chose se grippe.",
+      "p2": "Ton frein, c'est la délégation au niveau direction. Tes managers ne managent pas encore vraiment : ils exécutent. Et ça crée un goulot d'étranglement au niveau de la décision qui te force à rester dans la boucle opérationnelle.",
+      "p3": "Ce que ça coûte : tu ne peux pas dupliquer ton entreprise, la valoriser pour une cession, ou en lancer une autre tant que celle-ci dépend de ta présence quotidienne. Tu as construit une prison dorée.",
+      "p4": "Ce que ton profil révèle : à ton niveau, l'enjeu n'est plus le recrutement. C'est la montée en compétence managériale de ton équipe de direction. Un manager vraiment autonome et bien briefé vaut 5 à 10 recrutements supplémentaires en termes de capacité opérationnelle.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : une équipe de direction qui prend les décisions sans te solliciter sur l'opérationnel, un système de reporting qui te donne la vision sans l'immersion, et une entreprise qui peut fonctionner et croître sans ta présence quotidienne."
+    }
+  },
+  "Systèmes & organisation": {
+    "< 200K": {
+      "p1": "Tu es en dessous de 200K de CA. Tout est encore dans ta tête. Tes process, tes prix, tes workflows, tes checklists. Ça marche, tant que c'est toi qui le fais. Mais c'est épuisant et pas scalable.",
+      "p2": "Ton frein, c'est l'organisation. Concrètement : chaque tâche récurrente est refaite de zéro, chaque client reçoit une expérience légèrement différente, et tu dois tout contrôler parce que rien n'est documenté ni automatisé.",
+      "p3": "Ce que ça coûte aujourd'hui : tu passes 40% de ton temps sur des tâches qui pourraient être automatisées ou déléguées. Chaque heure passée à réinventer la roue est une heure de moins sur ta croissance réelle.",
+      "p4": "Ce que ton profil révèle : à ton stade, documenter 5 à 8 process clés peut changer radicalement ton quotidien. Pas besoin d'un logiciel complexe ni d'un consultant. Juste une méthode simple et des outils accessibles. C'est une journée de travail qui te fait gagner des heures chaque semaine.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : tes 5 process principaux documentés et reproductibles, 2 automatisations actives qui t'économisent 5h par semaine, et la capacité de confier du travail à quelqu'un d'autre sans tout réexpliquer à chaque fois."
+    },
+    "200K-500K": {
+      "p1": "Tu fais entre 200K et 500K. Tu as trouvé quelque chose qui marche. Mais tu ne peux pas le reproduire facilement ni le scaler. Passer à 1M implique une organisation que tu n'as pas encore construite.",
+      "p2": "Ton frein, c'est les systèmes. À ce stade, les problèmes typiques : pas de CRM sérieux, pas de process de livraison standardisé, pas de tableau de bord clair. Tu pilotes à l'instinct. Et ça va te rattraper.",
+      "p3": "Ce que ça coûte : chaque nouvelle embauche prend 3 fois plus de temps que prévu parce que tout est dans ta tête. Chaque nouveau client crée du stress parce que le process n'est pas rodé. Tu croîs en subissant, pas en maîtrisant.",
+      "p4": "Ce que ton profil révèle : tu as déjà ce qu'il faut pour construire une organisation solide. Le CA prouve que l'offre fonctionne. Il te manque la colonne vertébrale opérationnelle. Avec les bons outils et les bons process, le même niveau de CA devient 3 fois plus gérable et scalable.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un CRM fonctionnel et utilisé, un process de livraison client standardisé, un tableau de bord avec 5 indicateurs clés que tu consultes en 10 minutes chaque lundi. Et une organisation qui peut accueillir un nouveau collaborateur en 1 semaine au lieu de 3 mois."
+    },
+    "500K-1M": {
+      "p1": "Tu fais entre 500K et 1M. Tu as de la croissance. Mais aussi du désordre. Pas de désordre visible : du désordre caché dans les réunions inutiles, les relances manuelles et les process qui ne passent pas à l'échelle.",
+      "p2": "Ton frein, c'est l'absence des 5 systèmes clés qui permettent à une entreprise de scaler sans augmenter le chaos : CRM intégré, onboarding client, production standardisée, pilotage financier, reporting automatique.",
+      "p3": "Ce que ça coûte : tu perds 10 à 15% de ton CA chaque année en inefficacités invisibles. Et quand tu voudras lever des fonds, revendre ou ouvrir un second site, l'absence de systèmes sera le premier obstacle.",
+      "p4": "Ce que ton profil révèle : à ton niveau, l'organisation n'est plus une option. C'est le facteur limitant numéro un. Chaque euro investi dans la structuration à ce stade génère un retour de 3 à 5 euros en productivité, en rétention client et en capacité de croissance.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : les 5 systèmes clés en place, une réduction mesurable du temps passé en coordination et en réunions, et une organisation qui peut accueillir une hausse de 50% du volume d'activité sans embauche supplémentaire."
+    },
+    "> 1M": {
+      "p1": "Tu dépasses le million. La question c'est : est-ce que ton entreprise peut tourner sans que tu interviennes sur chaque recrutement clé, chaque devis important et chaque problème client complexe ?",
+      "p2": "Ton frein, c'est l'intégration des systèmes à grande échelle. Tu as des process. Mais ils ne sont pas intégrés. Chaque département a ses outils et ses habitudes. Ces frictions te coûtent en énergie, en temps et en CA.",
+      "p3": "Ce que ça coûte : une entreprise à 1M+ sans systèmes solides, c'est une entreprise fragile. Un départ clé, une crise client, une erreur de gestion. Et tout peut vaciller. Tu n'as pas encore la résilience que ta taille laisse supposer.",
+      "p4": "Ce que ton profil révèle : à ton stade, la valeur de l'entreprise est directement corrélée à sa capacité à fonctionner sans toi. Une entreprise avec des systèmes intégrés et documentés se vend 2 à 4 fois plus cher qu'une qui repose sur son dirigeant. Tu construis un actif. Pas juste un revenu.",
+      "p5": "Ce qui devient possible dans les 90 prochains jours : un audit complet de tes systèmes existants, une roadmap d'intégration par priorité d'impact, et les premières briques d'une organisation qui tourne en autonomie réelle. Avec les métriques pour le prouver."
+    }
+  }
+}
