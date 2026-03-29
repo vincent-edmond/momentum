@@ -111,8 +111,11 @@ async function selectVideos(
   const fromProvider = await searchVideos(profil, plan);
   const { ca, frein } = profil;
 
-  // Pool de vidéos accessibles
-  const accessible = filterVideosByAccess(data.videos, ca);
+  // Pool de vidéos accessibles (sans les Q&R)
+  const QR_PATTERN = /q\s*[&\/]\s*r|questions?\s*[&\/—-]?\s*r[eé]ponses?|q\s*&\s*a|\bq\s*r\b/i;
+  const accessible = filterVideosByAccess(data.videos, ca).filter(
+    (v) => !QR_PATTERN.test(v.titre)
+  );
 
   let candidates: Video[] = [];
 
