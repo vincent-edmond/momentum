@@ -26,6 +26,7 @@ export type Secteur =
 export interface ProfilProspect {
   prenom: string;
   email: string;
+  telephone?: string;
   ca: ChiffreAffaires;
   frein: FreinCroissance;
   secteur: Secteur;

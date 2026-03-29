@@ -15,7 +15,7 @@ function generateSessionId(): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json() as ProfilProspect & { sessionId?: string; clerkUserId?: string };
-    const { prenom, email, ca, frein, secteur, sessionId: existingId, clerkUserId } = body;
+    const { prenom, email, telephone, ca, frein, secteur, sessionId: existingId, clerkUserId } = body;
 
     if (!email || !prenom) {
       return NextResponse.json({ error: "email et prenom requis" }, { status: 400 });
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
     const sessionData: SessionData = {
       prenom: prenom.trim(),
       email: email.trim().toLowerCase(),
+      ...(telephone ? { telephone } : {}),
       ca,
       frein,
       secteur,
