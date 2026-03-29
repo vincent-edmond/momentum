@@ -14,7 +14,7 @@ import { Sidebar, MobileTopBar } from "@/components/layout/Sidebar";
 export default function QualifyPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // will be set to 1 if Clerk pre-fills prenom+email
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [ca, setCa] = useState<ChiffreAffaires | "">("");
@@ -42,9 +42,14 @@ export default function QualifyPage() {
           router.push(`/dashboard/${existing.sessionId}`);
           return;
         }
-        // Pré-remplir depuis Clerk
-        if (user.firstName) setPrenom(user.firstName);
-        if (user.primaryEmailAddress?.emailAddress) setEmail(user.primaryEmailAddress.emailAddress);
+        // Pré-remplir depuis Clerk et sauter l'étape 0 si les données sont disponibles
+        const clerkPrenom = user.firstName ?? "";
+        const clerkEmail = user.primaryEmailAddress?.emailAddress ?? "";
+        if (clerkPrenom) setPrenom(clerkPrenom);
+        if (clerkEmail) setEmail(clerkEmail);
+        if (clerkPrenom && clerkEmail.includes("@") && clerkEmail.includes(".")) {
+          setStep(1);
+        }
       }
 
       setChecking(false);

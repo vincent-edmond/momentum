@@ -14,8 +14,8 @@ function generateSessionId(): string {
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as ProfilProspect & { sessionId?: string };
-    const { prenom, email, ca, frein, secteur, sessionId: existingId } = body;
+    const body = await req.json() as ProfilProspect & { sessionId?: string; clerkUserId?: string };
+    const { prenom, email, ca, frein, secteur, sessionId: existingId, clerkUserId } = body;
 
     if (!email || !prenom) {
       return NextResponse.json({ error: "email et prenom requis" }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       frein,
       secteur,
       sessionId,
+      ...(clerkUserId ? { clerkUserId } : {}),
       createdAt: new Date().toISOString(),
     };
 
@@ -81,7 +82,7 @@ export async function GET(req: NextRequest) {
     if (clerkUserId) {
       const session = await sessions.findOne(
         { clerkUserId },
-        { projection: { _id: 0 } }
+        { projection: { _id: 0 }, sort: { createdAt: -1 } }
       );
       if (!session) return NextResponse.json({ error: "Utilisateur inconnu" }, { status: 404 });
       return NextResponse.json({ sessionId: session.sessionId, session });
