@@ -195,7 +195,22 @@ export default function LandingPage() {
                             repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.025) 39px, rgba(255,255,255,0.025) 40px);
           pointer-events: none;
         }
-        .hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+
+        /* Hero layout — 1 col mobile, 2 col desktop */
+        .hero-inner {
+          position: relative; z-index: 1;
+          display: grid; grid-template-columns: 1fr;
+          gap: 40px; align-items: center; text-align: center;
+        }
+        .hero-left { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+        @media (min-width: 900px) {
+          .hero { padding: 88px 0 96px; }
+          .hero-inner { grid-template-columns: 55fr 45fr; gap: 72px; text-align: left; }
+          .hero-left { align-items: flex-start; }
+          .hero-mini-stats { justify-content: flex-start !important; }
+          .hero h1 { max-width: none; font-size: clamp(32px, 3.2vw, 52px); }
+          .hero-sub { max-width: none; }
+        }
 
         .hero-badge {
           display: inline-flex; align-items: center; gap: 8px;
@@ -211,19 +226,19 @@ export default function LandingPage() {
 
         .hero h1 {
           font-family: 'Poppins', sans-serif;
-          font-size: clamp(30px, 5vw, 54px);
+          font-size: clamp(28px, 5vw, 54px);
           font-weight: 800; color: #fff; line-height: 1.15;
-          max-width: 800px;
+          max-width: 700px;
         }
         .hero h1 .accent { color: #6B9FFF; display: block; }
 
         .hero-sub {
-          font-size: clamp(16px, 2vw, 19px); color: rgba(255,255,255,0.7);
-          max-width: 640px; line-height: 1.65;
+          font-size: clamp(15px, 1.8vw, 18px); color: rgba(255,255,255,0.7);
+          max-width: 600px; line-height: 1.65;
         }
 
         .hero-author {
-          display: flex; align-items: center; gap: 14px;
+          display: inline-flex; align-items: center; gap: 14px;
           background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
           border-radius: var(--radius-lg); padding: 14px 20px;
           backdrop-filter: blur(12px);
@@ -240,7 +255,36 @@ export default function LandingPage() {
         .hero-mini-stat-label { font-size: 12px; color: rgba(255,255,255,0.5); }
         .hero-mini-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.15); }
 
-        .hero-cta-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        /* Opt-in card (right column desktop, below left on mobile) */
+        .hero-optin-card {
+          background: #fff;
+          border-radius: 24px;
+          padding: 40px 36px;
+          box-shadow: 0 28px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+          display: flex; flex-direction: column; gap: 20px;
+        }
+        .hero-optin-label {
+          font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+          text-transform: uppercase; color: var(--blue);
+        }
+        .hero-optin-title {
+          font-family: 'Poppins', sans-serif; font-weight: 800;
+          font-size: 22px; color: var(--navy); line-height: 1.25;
+          margin: 0;
+        }
+        .hero-optin-benefits {
+          list-style: none; display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0;
+        }
+        .hero-optin-benefits li {
+          display: flex; gap: 10px; font-size: 15px; color: var(--gray-800);
+          align-items: flex-start; line-height: 1.4;
+        }
+        .hero-optin-benefits li span { flex-shrink: 0; }
+        .hero-optin-divider { height: 1px; background: var(--gray-200); }
+        .hero-optin-reassurance {
+          text-align: center; font-size: 13px; color: var(--gray-500); margin: 0;
+        }
+
         .hero-reassurance { font-size: 13px; color: rgba(255,255,255,0.45); }
 
         /* ── STATS BAR ── */
@@ -389,58 +433,85 @@ export default function LandingPage() {
       <section className="hero">
         <div className="container">
           <div className="hero-inner">
-            <div className="hero-badge reveal">
-              <span className="hero-badge-dot" />
-              Diagnostic 100% Gratuit
-            </div>
 
-            <h1 className="reveal reveal-delay-1">
-              Découvrez en 2 minutes exactement<br />ce qui bloque votre croissance
-              <span className="accent">— et le plan personnalisé pour le débloquer.</span>
-            </h1>
+            {/* ── Colonne gauche ── */}
+            <div className="hero-left">
+              <div className="hero-badge reveal">
+                <span className="hero-badge-dot" />
+                Diagnostic 100% Gratuit
+              </div>
 
-            <p className="hero-sub reveal reveal-delay-2">
-              Notre IA analyse votre profil d&apos;entrepreneur et sélectionne parmi +190 ressources
-              celles qui correspondent précisément à votre situation, votre secteur et votre niveau de CA.
-            </p>
+              <h1 className="reveal reveal-delay-1">
+                Découvrez en 2 minutes exactement ce qui bloque votre croissance
+                <span className="accent">— et le plan personnalisé pour le débloquer.</span>
+              </h1>
 
-            <div className="hero-author reveal reveal-delay-2">
-              <img
-                src="https://mc-maxpiccinini-lp.netlify.app/max-portrait.webp"
-                alt="Max Piccinini"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-              <div>
-                <div className="hero-author-name">Max Piccinini</div>
-                <div className="hero-author-title">Nommé « Meilleur Coach Français » — Magazine Entreprendre</div>
+              <p className="hero-sub reveal reveal-delay-2">
+                Notre IA analyse votre profil d&apos;entrepreneur et sélectionne parmi +190 ressources
+                celles qui correspondent précisément à votre situation, votre secteur et votre niveau de CA.
+              </p>
+
+              <div className="hero-author reveal reveal-delay-2">
+                <img
+                  src="https://mc-maxpiccinini-lp.netlify.app/max-portrait.webp"
+                  alt="Max Piccinini"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+                <div>
+                  <div className="hero-author-name">Max Piccinini</div>
+                  <div className="hero-author-title">Nommé « Meilleur Coach Français » — Magazine Entreprendre</div>
+                </div>
+              </div>
+
+              <div className="hero-mini-stats reveal reveal-delay-3">
+                <div className="hero-mini-stat">
+                  <div className="hero-mini-stat-num">170K+</div>
+                  <div className="hero-mini-stat-label">entrepreneurs</div>
+                </div>
+                <div className="hero-mini-divider" />
+                <div className="hero-mini-stat">
+                  <div className="hero-mini-stat-num">190+</div>
+                  <div className="hero-mini-stat-label">modules</div>
+                </div>
+                <div className="hero-mini-divider" />
+                <div className="hero-mini-stat">
+                  <div className="hero-mini-stat-num">100M€+</div>
+                  <div className="hero-mini-stat-label">CA généré</div>
+                </div>
               </div>
             </div>
 
-            <div className="hero-mini-stats reveal reveal-delay-3">
-              <div className="hero-mini-stat">
-                <div className="hero-mini-stat-num">170K+</div>
-                <div className="hero-mini-stat-label">entrepreneurs</div>
-              </div>
-              <div className="hero-mini-divider" />
-              <div className="hero-mini-stat">
-                <div className="hero-mini-stat-num">190+</div>
-                <div className="hero-mini-stat-label">modules</div>
-              </div>
-              <div className="hero-mini-divider" />
-              <div className="hero-mini-stat">
-                <div className="hero-mini-stat-num">100M€+</div>
-                <div className="hero-mini-stat-label">CA généré</div>
+            {/* ── Colonne droite — Carte opt-in ── */}
+            <div className="reveal reveal-delay-2">
+              <div className="hero-optin-card">
+                <p className="hero-optin-label">✦ Accès immédiat &amp; gratuit</p>
+                <h3 className="hero-optin-title">
+                  Obtenez votre plan d&apos;action personnalisé en 2 minutes
+                </h3>
+                <ul className="hero-optin-benefits">
+                  {[
+                    'Diagnostic IA calibré sur votre profil exact',
+                    '3 vidéos sélectionnées parmi +190 ressources',
+                    'Plan de progression actionnable dès aujourd\'hui',
+                    '100% gratuit — résultat immédiat',
+                  ].map((item) => (
+                    <li key={item}>
+                      <span>✅</span> {item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="hero-optin-divider" />
+                <Link href={CTA_URL} className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: '18px 28px' }}>
+                  Commencer mon diagnostic →
+                </Link>
+                <p className="hero-optin-reassurance">
+                  🔒 Sans carte bancaire · Vos données restent confidentielles
+                </p>
               </div>
             </div>
 
-            <div className="hero-cta-group reveal reveal-delay-4">
-              <Link href={CTA_URL} className="btn-primary btn-lg">
-                Obtenir mon diagnostic gratuit →
-              </Link>
-              <p className="hero-reassurance">100% gratuit · Résultat immédiat · Sans carte bancaire</p>
-            </div>
           </div>
         </div>
       </section>
