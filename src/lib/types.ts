@@ -31,6 +31,8 @@ export interface ProfilProspect {
   secteur: Secteur;
 }
 
+export type Programme = "MM" | "3M";
+
 export interface Video {
   id: string;
   titre: string;
@@ -39,6 +41,13 @@ export interface Video {
   frein_cible: FreinCroissance[];
   ca_cible: ChiffreAffaires[];
   plan: number[];
+  programme?: Programme; // MM = MentorMax (tous niveaux), 3M = MaxMastermind (200K+)
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
 }
 
 export interface Temoignage {
@@ -103,6 +112,7 @@ export interface PersonalisationResult {
   };
   contenu: {
     video_principale: Video | null;
+    videos_supplementaires: Video[]; // jusqu'à 2 vidéos additionnelles
     temoignages: Temoignage[];
     lecture: Newsletter | null;
     etapes: Etape[];

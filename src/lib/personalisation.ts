@@ -8,6 +8,7 @@ import type {
   DiagnosticPoints,
   Chemin,
   Etape,
+  ChiffreAffaires,
 } from "./types";
 import contentData from "@/data/content.json";
 import diagnosticsData from "@/data/diagnostics.json";
@@ -81,48 +82,72 @@ function getChemins(
   return freinChemins;
 }
 
-// ─── Vidéo principale ────────────────────────────────────────────────────────
+// ─── Règle d'accès programme ─────────────────────────────────────────────────
 
 /**
- * Sélectionne la vidéo principale.
- * Essaie Pinecone (N8N → OpenAI embeddings → Pinecone namespace "cours") en premier,
- * fallback sur content.json.
- *
- * // TODO: brancher Google Sheet pour les 213 vidéos réelles en fallback.
+ * Les utilisateurs < 200K n'ont accès qu'au programme MentorMax (MM).
+ * Les utilisateurs 200K+ ont accès à MentorMax ET MaxMastermind (3M).
  */
-async function selectVideoPrincipale(
+function canAccess3M(ca: ChiffreAffaires): boolean {
+  return ca !== "< 200K";
+}
+
+function filterVideosByAccess(videos: Video[], ca: ChiffreAffaires): Video[] {
+  if (canAccess3M(ca)) return videos;
+  // Filtre : exclure les vidéos taguées 3M (MaxMastermind)
+  return videos.filter((v) => !v.programme || v.programme === "MM");
+}
+
+// ─── Vidéos ───────────────────────────────────────────────────────────────────
+
+/**
+ * Sélectionne jusqu'à 3 vidéos pertinentes (principale + supplémentaires).
+ * Respecte la règle d'accès programme (MM vs 3M).
+ */
+async function selectVideos(
   profil: ProfilProspect,
   plan: number
-): Promise<Video | null> {
+): Promise<{ principale: Video | null; supplementaires: Video[] }> {
   const fromProvider = await searchVideos(profil, plan);
-  if (fromProvider) return fromProvider;
-
-  // Fallback : filtrage statique content.json
   const { ca, frein } = profil;
 
-  const exactMatch = data.videos.find(
-    (v) =>
-      v.frein_cible.includes(frein) &&
-      v.ca_cible.includes(ca) &&
-      v.plan.includes(plan)
-  );
-  if (exactMatch) return exactMatch;
+  // Pool de vidéos accessibles
+  const accessible = filterVideosByAccess(data.videos, ca);
 
-  const freinPlan = data.videos.find(
+  let candidates: Video[] = [];
+
+  // 1. Exact match (frein + CA + plan)
+  const exact = accessible.filter(
+    (v) => v.frein_cible.includes(frein) && v.ca_cible.includes(ca) && v.plan.includes(plan)
+  );
+  // 2. Frein + plan
+  const freinPlan = accessible.filter(
     (v) => v.frein_cible.includes(frein) && v.plan.includes(plan)
   );
-  if (freinPlan) return freinPlan;
+  // 3. Frein seul
+  const freinOnly = accessible.filter((v) => v.frein_cible.includes(frein));
+  // 4. Tout le reste (fallback)
+  const rest = accessible;
 
-  const freinCA = data.videos.find(
-    (v) => v.frein_cible.includes(frein) && v.ca_cible.includes(ca)
-  );
-  if (freinCA) return freinCA;
+  // Construire un pool sans doublons
+  const seen = new Set<string>();
+  for (const list of [exact, freinPlan, freinOnly, rest]) {
+    for (const v of list) {
+      if (!seen.has(v.id)) {
+        seen.add(v.id);
+        candidates.push(v);
+      }
+    }
+    if (candidates.length >= 3) break;
+  }
 
-  return (
-    data.videos.find(
-      (v) => v.frein_cible.length >= 3 && v.ca_cible.length >= 3
-    ) || null
-  );
+  // Provider Pinecone supplante la première vidéo si disponible
+  const principale = fromProvider ?? candidates[0] ?? null;
+  const supplementaires = candidates
+    .filter((v) => v.id !== principale?.id)
+    .slice(0, 2);
+
+  return { principale, supplementaires };
 }
 
 // ─── Témoignages ─────────────────────────────────────────────────────────────
@@ -187,16 +212,17 @@ export async function personalise(
   }
 
   // Appels parallèles pour minimiser la latence
-  const [diagnostic, video_principale] = await Promise.all([
+  const [diagnostic, videos] = await Promise.all([
     getDiagnosticPoints(profil),
-    selectVideoPrincipale(profil, plan),
+    selectVideos(profil, plan),
   ]);
 
   return {
     diagnostic,
     chemins: getChemins(profil),
     contenu: {
-      video_principale,
+      video_principale: videos.principale,
+      videos_supplementaires: videos.supplementaires,
       temoignages: selectTemoignages(profil, plan),
       lecture: selectLecture(profil),
       etapes: getEtapes(profil, plan),

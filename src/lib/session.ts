@@ -1,4 +1,4 @@
-import type { ProfilProspect, SessionData, Progression } from "./types";
+import type { ProfilProspect, SessionData, Progression, ChatMessage } from "./types";
 
 /**
  * Génère un ID de session unique.
@@ -26,9 +26,55 @@ export function saveSession(profil: ProfilProspect): string {
 
   if (typeof window !== "undefined") {
     localStorage.setItem(`momentum_${sessionId}`, JSON.stringify(sessionData));
+    // Index email → sessionId pour le retour utilisateur
+    localStorage.setItem(`momentum_email_${profil.email}`, sessionId);
+    // Session courante
+    localStorage.setItem("momentum_current", sessionId);
   }
 
   return sessionId;
+}
+
+/**
+ * Retrouve la session d'un utilisateur par son email (retour utilisateur).
+ */
+export function getSessionByEmail(email: string): SessionData | null {
+  if (typeof window === "undefined") return null;
+  const sessionId = localStorage.getItem(
+    `momentum_email_${email.trim().toLowerCase()}`
+  );
+  if (!sessionId) return null;
+  return getSession(sessionId);
+}
+
+/**
+ * Retourne la session active courante.
+ */
+export function getCurrentSessionId(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("momentum_current");
+}
+
+// ─── Chat history ─────────────────────────────────────────────────────────────
+
+export function getChatHistory(sessionId: string): ChatMessage[] {
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem(`momentum_chat_${sessionId}`);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw) as ChatMessage[];
+  } catch {
+    return [];
+  }
+}
+
+export function saveChatMessage(sessionId: string, msg: ChatMessage): void {
+  if (typeof window === "undefined") return;
+  const history = getChatHistory(sessionId);
+  history.push(msg);
+  // Garder les 100 derniers messages
+  const trimmed = history.slice(-100);
+  localStorage.setItem(`momentum_chat_${sessionId}`, JSON.stringify(trimmed));
 }
 
 /**

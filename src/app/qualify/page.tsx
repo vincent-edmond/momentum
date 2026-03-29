@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { saveSession } from "@/lib/session";
+import { saveSession, getSessionByEmail, getCurrentSessionId } from "@/lib/session";
 import type { ChiffreAffaires, FreinCroissance, Secteur } from "@/lib/types";
 import { Stepper } from "@/components/qualify/Stepper";
 import { QuestionCA } from "@/components/qualify/QuestionCA";
@@ -18,6 +18,16 @@ export default function QualifyPage() {
   const [frein, setFrein] = useState<FreinCroissance | "">("");
   const [secteur, setSecteur] = useState<Secteur | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [returningUser, setReturningUser] = useState<{ sessionId: string; prenom: string } | null>(null);
+
+  // Détection utilisateur de retour (session courante dans localStorage)
+  useEffect(() => {
+    const currentId = getCurrentSessionId();
+    if (currentId) {
+      // Redirection automatique si session active récente
+      router.push(`/dashboard/${currentId}`);
+    }
+  }, [router]);
 
   const totalSteps = 4;
 
@@ -28,6 +38,16 @@ export default function QualifyPage() {
       case 2: return frein !== "";
       case 3: return secteur !== "";
       default: return false;
+    }
+  }
+
+  function handleEmailBlur() {
+    if (!email.includes("@")) return;
+    const existing = getSessionByEmail(email.trim().toLowerCase());
+    if (existing) {
+      setReturningUser({ sessionId: existing.sessionId, prenom: existing.prenom });
+    } else {
+      setReturningUser(null);
     }
   }
 
@@ -105,10 +125,30 @@ export default function QualifyPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onBlur={handleEmailBlur}
                     placeholder="jean@entreprise.com"
                     className="w-full px-4 py-3.5 border border-zinc-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0046FF]/40 focus:border-[#0046FF] transition-all text-zinc-900 placeholder-zinc-300"
                   />
                 </div>
+
+                {/* Bannière utilisateur de retour */}
+                {returningUser && (
+                  <div className="bg-[#0046FF]/5 border border-[#0046FF]/20 rounded-xl p-4">
+                    <p className="text-sm font-semibold text-[#0046FF] mb-1">
+                      Bienvenue de retour, {returningUser.prenom} !
+                    </p>
+                    <p className="text-xs text-zinc-500 mb-3">
+                      Ton espace personnalisé est prêt. Reprends où tu en étais.
+                    </p>
+                    <button
+                      onClick={() => router.push(`/dashboard/${returningUser.sessionId}`)}
+                      className="bg-[#0046FF] text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-[#0033CC] transition-all"
+                    >
+                      Reprendre mon espace →
+                    </button>
+                  </div>
+                )}
+
                 <p className="text-xs text-zinc-400">
                   Vos données sont confidentielles. Pas de spam.
                 </p>
