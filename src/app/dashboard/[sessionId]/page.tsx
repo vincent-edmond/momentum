@@ -269,14 +269,19 @@ function DashboardContent() {
 
           {/* Étape 1 : Vidéo principale */}
           <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-7 h-7 rounded-full bg-[#0046FF] flex items-center justify-center text-white text-xs font-black">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 rounded-full bg-[#0046FF] flex items-center justify-center text-white text-xs font-black flex-shrink-0">
                 1
               </div>
-              <h2 className="text-lg font-black text-[#0A0A0F]">
+              <span className="text-xs font-bold text-[#9096A5] uppercase tracking-widest">
                 {result.contenu.etapes[0]?.titre || "Formation"}
-              </h2>
+              </span>
             </div>
+            {result.contenu.etapes[0]?.description && (
+              <p className="text-[#555B6E] text-sm leading-relaxed mb-4 pl-9">
+                {result.contenu.etapes[0].description}
+              </p>
+            )}
 
             {result.contenu.video_principale ? (
               <VideoCard

@@ -204,12 +204,12 @@ export default function LandingPage() {
         }
         .hero-left { display: flex; flex-direction: column; align-items: center; gap: 20px; }
         @media (min-width: 900px) {
-          .hero { padding: 72px 0 80px; }
-          .hero-inner { grid-template-columns: 52fr 48fr; gap: 56px; text-align: left; align-items: start; }
-          .hero-left { align-items: flex-start; gap: 18px; }
+          .hero { padding: 80px 0 88px; }
+          .hero-inner { grid-template-columns: 52fr 48fr; gap: 60px; text-align: left; align-items: center; }
+          .hero-left { align-items: flex-start; gap: 20px; }
           .hero-mini-stats { justify-content: flex-start !important; }
-          .hero h1 { max-width: none; font-size: clamp(28px, 2.6vw, 40px); }
-          .hero-sub { max-width: none; font-size: 16px; }
+          .hero h1 { max-width: none; font-size: clamp(26px, 2.2vw, 34px); line-height: 1.2; }
+          .hero-sub { max-width: none; font-size: 15px; }
         }
 
         .hero-badge {
@@ -258,10 +258,10 @@ export default function LandingPage() {
         /* Opt-in card (right column desktop, below left on mobile) */
         .hero-optin-card {
           background: #fff;
-          border-radius: 24px;
-          padding: 40px 36px;
-          box-shadow: 0 28px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
-          display: flex; flex-direction: column; gap: 20px;
+          border-radius: 20px;
+          padding: 36px 32px;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.32), 0 0 0 1px rgba(255,255,255,0.08);
+          display: flex; flex-direction: column; gap: 16px;
         }
         .hero-optin-label {
           font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
@@ -269,20 +269,20 @@ export default function LandingPage() {
         }
         .hero-optin-title {
           font-family: 'Poppins', sans-serif; font-weight: 800;
-          font-size: 22px; color: var(--navy); line-height: 1.25;
+          font-size: 20px; color: var(--navy); line-height: 1.3;
           margin: 0;
         }
         .hero-optin-benefits {
-          list-style: none; display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0;
+          list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0;
         }
         .hero-optin-benefits li {
-          display: flex; gap: 10px; font-size: 15px; color: var(--gray-800);
-          align-items: flex-start; line-height: 1.4;
+          display: flex; gap: 10px; font-size: 14px; color: var(--gray-800);
+          align-items: flex-start; line-height: 1.45;
         }
-        .hero-optin-benefits li span { flex-shrink: 0; }
-        .hero-optin-divider { height: 1px; background: var(--gray-200); }
+        .hero-optin-benefits li span { flex-shrink: 0; margin-top: 1px; }
+        .hero-optin-divider { height: 1px; background: var(--gray-200); margin: 4px 0; }
         .hero-optin-reassurance {
-          text-align: center; font-size: 13px; color: var(--gray-500); margin: 0;
+          text-align: center; font-size: 12px; color: var(--gray-500); margin: 0;
         }
 
         .hero-reassurance { font-size: 13px; color: rgba(255,255,255,0.45); }
@@ -442,8 +442,8 @@ export default function LandingPage() {
               </div>
 
               <h1 className="reveal reveal-delay-1">
-                Ce qui bloque votre croissance — et le plan exact pour le débloquer.
-                <span className="accent">Diagnostic IA en 2 minutes.</span>
+                Ce qui freine votre croissance — et le plan exact pour changer ça.
+                <span className="accent">Diagnostic IA · 2 minutes · Gratuit.</span>
               </h1>
 
               <p className="hero-sub reveal reveal-delay-2">
