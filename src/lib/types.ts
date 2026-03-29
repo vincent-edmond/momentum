@@ -131,5 +131,6 @@ export interface Progression {
 
 export interface SessionData extends ProfilProspect {
   sessionId: string;
+  clerkUserId?: string;
   createdAt: string;
 }

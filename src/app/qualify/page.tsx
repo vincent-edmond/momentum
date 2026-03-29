@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { saveSession, getSessionByEmailAsync, getCurrentSessionId } from "@/lib/session";
+import { useUser } from "@clerk/nextjs";
+import { saveSession, getSessionByClerkUserIdAsync, getCurrentSessionId } from "@/lib/session";
 import type { ChiffreAffaires, FreinCroissance, Secteur } from "@/lib/types";
 import { Stepper } from "@/components/qualify/Stepper";
 import { QuestionCA } from "@/components/qualify/QuestionCA";
@@ -12,6 +13,7 @@ import { Sidebar, MobileTopBar } from "@/components/layout/Sidebar";
 
 export default function QualifyPage() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [step, setStep] = useState(0);
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
@@ -19,15 +21,46 @@ export default function QualifyPage() {
   const [frein, setFrein] = useState<FreinCroissance | "">("");
   const [secteur, setSecteur] = useState<Secteur | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [returningUser, setReturningUser] = useState<{ sessionId: string; prenom: string } | null>(null);
+  const [checking, setChecking] = useState(true);
 
-  // Détection utilisateur de retour (session courante dans localStorage)
+  // Pré-remplissage depuis Clerk + détection utilisateur de retour
   useEffect(() => {
-    const currentId = getCurrentSessionId();
-    if (currentId) {
-      router.push(`/dashboard/${currentId}`);
-    }
-  }, [router]);
+    if (!isLoaded) return;
+
+    const checkExistingSession = async () => {
+      // 1. Session locale existante ?
+      const currentId = getCurrentSessionId();
+      if (currentId) {
+        router.push(`/dashboard/${currentId}`);
+        return;
+      }
+
+      // 2. Session liée au compte Clerk (cross-device) ?
+      if (user?.id) {
+        const existing = await getSessionByClerkUserIdAsync(user.id);
+        if (existing) {
+          router.push(`/dashboard/${existing.sessionId}`);
+          return;
+        }
+        // Pré-remplir depuis Clerk
+        if (user.firstName) setPrenom(user.firstName);
+        if (user.primaryEmailAddress?.emailAddress) setEmail(user.primaryEmailAddress.emailAddress);
+      }
+
+      setChecking(false);
+    };
+
+    checkExistingSession();
+  }, [isLoaded, user, router]);
+
+  // Écran de chargement pendant la vérification
+  if (!isLoaded || checking) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#0046FF] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const totalSteps = 4;
 
@@ -38,16 +71,6 @@ export default function QualifyPage() {
       case 2: return frein !== "";
       case 3: return secteur !== "";
       default: return false;
-    }
-  }
-
-  async function handleEmailBlur() {
-    if (!email.includes("@")) return;
-    const existing = await getSessionByEmailAsync(email.trim().toLowerCase());
-    if (existing) {
-      setReturningUser({ sessionId: existing.sessionId, prenom: existing.prenom });
-    } else {
-      setReturningUser(null);
     }
   }
 
@@ -63,7 +86,14 @@ export default function QualifyPage() {
   function handleSubmit() {
     if (!ca || !frein || !secteur) return;
     setIsSubmitting(true);
-    const sessionId = saveSession({ prenom: prenom.trim(), email: email.trim().toLowerCase(), ca, frein, secteur });
+    const sessionId = saveSession({
+      prenom: prenom.trim(),
+      email: email.trim().toLowerCase(),
+      ca,
+      frein,
+      secteur,
+      clerkUserId: user?.id,
+    });
     router.push(`/diagnostic/${sessionId}`);
   }
 
@@ -128,29 +158,10 @@ export default function QualifyPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      onBlur={handleEmailBlur}
                       placeholder="jean@entreprise.com"
                       className="w-full px-4 py-3.5 border border-zinc-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0046FF]/40 focus:border-[#0046FF] transition-all text-zinc-900 placeholder-zinc-300"
                     />
                   </div>
-
-                  {/* Bannière utilisateur de retour */}
-                  {returningUser && (
-                    <div className="bg-[#0046FF]/5 border border-[#0046FF]/20 rounded-xl p-4">
-                      <p className="text-sm font-semibold text-[#0046FF] mb-1">
-                        Bienvenue de retour, {returningUser.prenom} !
-                      </p>
-                      <p className="text-xs text-zinc-500 mb-3">
-                        Ton espace personnalisé est prêt. Reprends où tu en étais.
-                      </p>
-                      <button
-                        onClick={() => router.push(`/dashboard/${returningUser.sessionId}`)}
-                        className="bg-[#0046FF] text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-[#0033CC] transition-all"
-                      >
-                        Reprendre mon espace →
-                      </button>
-                    </div>
-                  )}
 
                   <p className="text-xs text-zinc-400">
                     Vos données sont confidentielles. Pas de spam.

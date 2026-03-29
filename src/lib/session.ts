@@ -1,5 +1,7 @@
 import type { ProfilProspect, SessionData, Progression, ChatMessage } from "./types";
 
+type ProfilWithClerk = ProfilProspect & { clerkUserId?: string };
+
 function generateSessionId(): string {
   return `s_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -11,7 +13,7 @@ function generateSessionId(): string {
  * Le localStorage reste la source primaire (instantané).
  * Le serveur est le backup cross-device (async, fire-and-forget).
  */
-export function saveSession(profil: ProfilProspect): string {
+export function saveSession(profil: ProfilWithClerk): string {
   const sessionId = generateSessionId();
   const sessionData: SessionData = {
     ...profil,
@@ -23,6 +25,9 @@ export function saveSession(profil: ProfilProspect): string {
     localStorage.setItem(`momentum_${sessionId}`, JSON.stringify(sessionData));
     localStorage.setItem(`momentum_email_${profil.email}`, sessionId);
     localStorage.setItem("momentum_current", sessionId);
+    if (profil.clerkUserId) {
+      localStorage.setItem(`momentum_clerk_${profil.clerkUserId}`, sessionId);
+    }
 
     // Persistance cross-device — fire and forget
     fetch("/api/session", {
@@ -33,6 +38,37 @@ export function saveSession(profil: ProfilProspect): string {
   }
 
   return sessionId;
+}
+
+/**
+ * Retrouve la session d'un utilisateur par son clerkUserId.
+ * 1. localStorage (instantané)
+ * 2. Serveur MongoDB (cross-device)
+ */
+export async function getSessionByClerkUserIdAsync(clerkUserId: string): Promise<SessionData | null> {
+  // 1. localStorage
+  if (typeof window !== "undefined") {
+    const localId = localStorage.getItem(`momentum_clerk_${clerkUserId}`);
+    if (localId) {
+      const local = getSession(localId);
+      if (local) return local;
+    }
+  }
+
+  // 2. Serveur
+  try {
+    const res = await fetch(`/api/session?clerkUserId=${encodeURIComponent(clerkUserId)}`);
+    if (!res.ok) return null;
+    const data = await res.json() as { sessionId: string; session: SessionData };
+    if (data.session && typeof window !== "undefined") {
+      localStorage.setItem(`momentum_${data.sessionId}`, JSON.stringify(data.session));
+      localStorage.setItem(`momentum_clerk_${clerkUserId}`, data.sessionId);
+      localStorage.setItem("momentum_current", data.sessionId);
+    }
+    return data.session ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /**

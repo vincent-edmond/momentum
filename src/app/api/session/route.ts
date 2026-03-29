@@ -61,6 +61,8 @@ export async function GET(req: NextRequest) {
     const sessionId = req.nextUrl.searchParams.get("id");
     const email = req.nextUrl.searchParams.get("email");
 
+    const clerkUserId = req.nextUrl.searchParams.get("clerkUserId");
+
     if (sessionId) {
       const session = await sessions.findOne({ sessionId }, { projection: { _id: 0 } });
       if (!session) return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
@@ -76,7 +78,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ sessionId: session.sessionId, session });
     }
 
-    return NextResponse.json({ error: "id ou email requis" }, { status: 400 });
+    if (clerkUserId) {
+      const session = await sessions.findOne(
+        { clerkUserId },
+        { projection: { _id: 0 } }
+      );
+      if (!session) return NextResponse.json({ error: "Utilisateur inconnu" }, { status: 404 });
+      return NextResponse.json({ sessionId: session.sessionId, session });
+    }
+
+    return NextResponse.json({ error: "id, email ou clerkUserId requis" }, { status: 400 });
   } catch (err) {
     console.error("GET /api/session error:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
