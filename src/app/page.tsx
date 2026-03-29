@@ -200,16 +200,16 @@ export default function LandingPage() {
         .hero-inner {
           position: relative; z-index: 1;
           display: grid; grid-template-columns: 1fr;
-          gap: 40px; align-items: center; text-align: center;
+          gap: 36px; align-items: center; text-align: center;
         }
-        .hero-left { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+        .hero-left { display: flex; flex-direction: column; align-items: center; gap: 20px; }
         @media (min-width: 900px) {
-          .hero { padding: 88px 0 96px; }
-          .hero-inner { grid-template-columns: 55fr 45fr; gap: 72px; text-align: left; }
-          .hero-left { align-items: flex-start; }
+          .hero { padding: 72px 0 80px; }
+          .hero-inner { grid-template-columns: 52fr 48fr; gap: 56px; text-align: left; align-items: start; }
+          .hero-left { align-items: flex-start; gap: 18px; }
           .hero-mini-stats { justify-content: flex-start !important; }
-          .hero h1 { max-width: none; font-size: clamp(32px, 3.2vw, 52px); }
-          .hero-sub { max-width: none; }
+          .hero h1 { max-width: none; font-size: clamp(28px, 2.6vw, 40px); }
+          .hero-sub { max-width: none; font-size: 16px; }
         }
 
         .hero-badge {
@@ -226,14 +226,14 @@ export default function LandingPage() {
 
         .hero h1 {
           font-family: 'Poppins', sans-serif;
-          font-size: clamp(28px, 5vw, 54px);
+          font-size: clamp(28px, 5vw, 48px);
           font-weight: 800; color: #fff; line-height: 1.15;
           max-width: 700px;
         }
         .hero h1 .accent { color: #6B9FFF; display: block; }
 
         .hero-sub {
-          font-size: clamp(15px, 1.8vw, 18px); color: rgba(255,255,255,0.7);
+          font-size: clamp(15px, 1.6vw, 17px); color: rgba(255,255,255,0.7);
           max-width: 600px; line-height: 1.65;
         }
 
@@ -442,8 +442,8 @@ export default function LandingPage() {
               </div>
 
               <h1 className="reveal reveal-delay-1">
-                Découvrez en 2 minutes exactement ce qui bloque votre croissance
-                <span className="accent">— et le plan personnalisé pour le débloquer.</span>
+                Ce qui bloque votre croissance — et le plan exact pour le débloquer.
+                <span className="accent">Diagnostic IA en 2 minutes.</span>
               </h1>
 
               <p className="hero-sub reveal reveal-delay-2">
