@@ -92,22 +92,8 @@ function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
 export default function LandingPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    // Scroll reveal
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((el) => {
-          if (el.isIntersecting) {
-            el.target.classList.add('is-visible');
-            observer.unobserve(el.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-    );
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+  // Scroll reveal géré par CSS animations — pas d'IntersectionObserver
+  // (évite le conflit avec les re-renders React/Clerk qui effacent les classes DOM)
 
   return (
     <div className="landing-root">
@@ -138,13 +124,16 @@ export default function LandingPage() {
           --radius-pill: 100px;
         }
 
-        /* ── Scroll Reveal ── */
-        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s cubic-bezier(.22,.61,.36,1), transform 0.6s cubic-bezier(.22,.61,.36,1); }
-        .reveal.is-visible { opacity: 1; transform: none; }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
+        /* ── Scroll Reveal — CSS animation pure (React-safe) ── */
+        @keyframes revealUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: none; }
+        }
+        .reveal { animation: revealUp 0.65s cubic-bezier(.22,.61,.36,1) both; }
+        .reveal-delay-1 { animation-delay: 0.1s; }
+        .reveal-delay-2 { animation-delay: 0.2s; }
+        .reveal-delay-3 { animation-delay: 0.3s; }
+        .reveal-delay-4 { animation-delay: 0.4s; }
 
         /* ── Topbar ── */
         .topbar {
