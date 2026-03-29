@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Routes publiques (pas besoin d'être connecté)
 const isPublicRoute = createRouteMatcher([
+  "/",           // Landing page opt-in
   "/sign-in(.*)",
   "/api(.*)", // Les API routes utilisent sessionId, pas Clerk
 ]);
