@@ -10,10 +10,16 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
-    const { userId } = await auth();
-    if (!userId) {
+    try {
+      const { userId } = await auth();
+      if (!userId) {
+        const signInUrl = new URL("/sign-in", request.url);
+        signInUrl.searchParams.set("redirect_url", request.url);
+        return NextResponse.redirect(signInUrl);
+      }
+    } catch {
+      // En cas d'erreur Clerk (token invalide, instance dev, etc.), redirect sign-in
       const signInUrl = new URL("/sign-in", request.url);
-      signInUrl.searchParams.set("redirect_url", request.url);
       return NextResponse.redirect(signInUrl);
     }
   }
