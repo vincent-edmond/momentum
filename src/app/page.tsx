@@ -1,11 +1,97 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 const CTA_URL = '/sign-in';
 
+function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 500,
+        background: 'rgba(0,13,43,0.75)', backdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        animation: 'fadeIn 0.2s ease',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: '#fff', width: '100%', maxWidth: 520,
+          borderRadius: '24px 24px 0 0',
+          padding: '32px 28px 40px',
+          animation: 'slideUp 0.3s cubic-bezier(.22,.61,.36,1)',
+          position: 'relative',
+        }}
+      >
+        {/* Handle bar */}
+        <div style={{ width: 40, height: 4, background: '#E2E4EA', borderRadius: 2, margin: '0 auto 24px' }} />
+
+        {/* Close */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 20, right: 20,
+            background: '#F0F1F5', border: 'none', borderRadius: '50%',
+            width: 32, height: 32, cursor: 'pointer', fontSize: 18, color: '#555B6E',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >×</button>
+
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0046FF', marginBottom: 8 }}>
+          Diagnostic 100% Gratuit
+        </p>
+        <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 800, fontSize: 22, color: '#00194C', lineHeight: 1.25, marginBottom: 16 }}>
+          Obtenez votre plan personnalisé en 2 minutes
+        </h2>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
+          {[
+            'Diagnostic IA selon votre profil exact',
+            '3 vidéos sélectionnées pour vous',
+            'Plan de progression actionnable',
+            '100% gratuit — résultat immédiat',
+          ].map((item) => (
+            <li key={item} style={{ display: 'flex', gap: 10, fontSize: 15, color: '#2A2D35', alignItems: 'flex-start' }}>
+              <span style={{ color: '#0046FF', flexShrink: 0 }}>✅</span> {item}
+            </li>
+          ))}
+        </ul>
+        <Link
+          href={CTA_URL}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: '#0046FF', color: '#fff', borderRadius: 100,
+            padding: '18px 32px', fontWeight: 700, fontSize: 17, textDecoration: 'none',
+            boxShadow: '0 4px 24px rgba(0,70,255,0.35)',
+          }}
+        >
+          Commencer mon diagnostic →
+        </Link>
+        <p style={{ textAlign: 'center', fontSize: 13, color: '#9096A5', marginTop: 14 }}>
+          🔒 Sans carte bancaire · Vos données restent confidentielles
+        </p>
+      </div>
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { transform: translateY(100%) } to { transform: translateY(0) } }
+      `}</style>
+    </div>
+  );
+}
+
 export default function LandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     // Scroll reveal
     const observer = new IntersectionObserver(
@@ -634,10 +720,20 @@ export default function LandingPage() {
 
       {/* ── STICKY MOBILE CTA ── */}
       <div className="sticky-cta">
-        <Link href={CTA_URL}>
+        <button
+          onClick={() => setModalOpen(true)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            color: '#fff', fontWeight: 700, fontSize: 16,
+            background: 'none', border: 'none', cursor: 'pointer', width: '100%',
+          }}
+        >
           Obtenir mon diagnostic gratuit →
-        </Link>
+        </button>
       </div>
+
+      {/* ── MODAL ── */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
