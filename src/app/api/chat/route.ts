@@ -3,29 +3,166 @@ import type { ChatMessage } from "@/lib/types";
 
 /**
  * POST /api/chat
- * Envoie un message au clone IA de Max via N8N webhook.
+ * Coach IA Max Piccinini — Pipeline direct (Anthropic + Pinecone)
  *
- * Body : { sessionId, message, history: ChatMessage[], profil? }
- * Retour : { reply: string }
- *
- * Le webhook N8N reçoit le contexte complet et répond en tant que Max Piccinini.
- * Fallback statique si N8N non disponible.
+ * Logique de coaching :
+ * 1. Recherche sémantique dans la base Pinecone (cours + témoignages)
+ * 2. Appel Anthropic avec persona Max Piccinini Coach Business
+ * 3. Jamais de réponse directe — questions de coaching pour faire avancer
+ * 4. Détection "cherche info gratuite" → CTA session stratégique après 5+ questions
  */
 
-const N8N_CHAT_WEBHOOK = process.env.N8N_CHAT_WEBHOOK_URL ?? "";
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? "";
+const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
+const PINECONE_KEY = process.env.PINECONE_API_KEY ?? "";
+const PINECONE_HOST = process.env.PINECONE_HOST ?? "https://newsletter-max-piccinini-eedjp7k.svc.aped-4627-b74a.pinecone.io";
 
-// Réponses fallback si N8N non connecté
-const FALLBACK_RESPONSES = [
-  "Bonne question. Pour être direct avec toi : le vrai levier dans ta situation, c'est de clarifier ta proposition de valeur avant de chercher à scaler quoi que ce soit.",
-  "Ce que j'ai observé chez des centaines d'entrepreneurs : le problème n'est presque jamais là où on croit qu'il est. Dis-moi en plus sur ta situation concrète.",
-  "Voilà ce que je ferais à ta place en ce moment : me concentrer sur les 20% d'actions qui produisent 80% des résultats. Qu'est-ce qui génère le plus de CA chez toi aujourd'hui ?",
-  "La réponse courte : oui, c'est possible. La réponse honnête : ça dépend de plusieurs variables dans ton modèle économique. Parle-moi de ton offre principale.",
-  "Je vais te donner mon point de vue franc : beaucoup d'entrepreneurs perdent du temps sur des optimisations secondaires. Quel est ton frein numéro 1 en ce moment ?",
-];
+// ─── Pinecone : recherche sémantique ─────────────────────────────────────────
 
-function getStaticFallback(): string {
-  return FALLBACK_RESPONSES[Math.floor(Math.random() * FALLBACK_RESPONSES.length)];
+async function searchKnowledgeBase(
+  query: string,
+  topK = 3
+): Promise<{ titre?: string; description?: string; text?: string; score: number }[]> {
+  if (!OPENAI_KEY || !PINECONE_KEY) return [];
+
+  try {
+    // 1. Embed la question avec OpenAI text-embedding-3-small
+    const embRes = await fetch("https://api.openai.com/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ model: "text-embedding-3-small", input: query }),
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (!embRes.ok) return [];
+    const embData = await embRes.json() as { data: { embedding: number[] }[] };
+    const vector = embData.data[0].embedding;
+
+    // 2. Query Pinecone — namespace "cours"
+    const pineRes = await fetch(`${PINECONE_HOST}/query`, {
+      method: "POST",
+      headers: {
+        "Api-Key": PINECONE_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vector, topK, namespace: "cours", includeMetadata: true }),
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (!pineRes.ok) return [];
+    const pineData = await pineRes.json() as {
+      matches: { score: number; metadata?: Record<string, string> }[]
+    };
+
+    return (pineData.matches || [])
+      .filter((m) => m.score > 0.6)
+      .map((m) => ({
+        titre: m.metadata?.titre || m.metadata?.title || m.metadata?.video_title,
+        description: m.metadata?.description || m.metadata?.summary,
+        text: m.metadata?.text?.slice(0, 400),
+        score: m.score,
+      }));
+  } catch {
+    return [];
+  }
 }
+
+// ─── Détection "mining" d'infos gratuites ─────────────────────────────────────
+
+function detectFreeInfoSeeking(history: ChatMessage[]): boolean {
+  const userMessages = history.filter((m) => m.role === "user");
+  if (userMessages.length < 5) return false;
+
+  // Patterns qui indiquent une recherche d'info gratuite intensive
+  const infoSeekingPatterns = [
+    /comment (faire|faire pour|on fait|je dois|il faut)/i,
+    /donne[z]?[\s-]moi/i,
+    /expliqu[e|ez]/i,
+    /qu[e']est[\s-]ce que/i,
+    /c[']est quoi/i,
+    /\?.*\?/,  // double question
+  ];
+
+  const recentMessages = userMessages.slice(-5);
+  const infoSeekingCount = recentMessages.filter((m) =>
+    infoSeekingPatterns.some((p) => p.test(m.content))
+  ).length;
+
+  return infoSeekingCount >= 4;
+}
+
+// ─── Prompt système Max Piccinini Coach ───────────────────────────────────────
+
+function buildSystemPrompt(
+  profil: { prenom?: string; ca?: string; frein?: string; secteur?: string } | undefined,
+  knowledgeContext: string,
+  shouldCta: boolean
+): string {
+  const profilContext = profil
+    ? `
+Profil de l'entrepreneur :
+- Prénom : ${profil.prenom || "inconnu"}
+- CA actuel : ${profil.ca || "non renseigné"}
+- Principal frein : ${profil.frein || "non renseigné"}
+- Secteur : ${profil.secteur || "non renseigné"}
+`
+    : "";
+
+  const knowledgeSection = knowledgeContext
+    ? `
+Connaissances pertinentes de la base Max Piccinini (cours, méthodes, témoignages) :
+${knowledgeContext}
+`
+    : "";
+
+  const ctaInstruction = shouldCta
+    ? `
+⚠️ INSTRUCTION SPÉCIALE : Cette personne cherche beaucoup d'informations gratuites. À la fin de ta réponse, ajoute naturellement une invitation à réserver une session stratégique offerte pour aller plus loin concrètement.
+`
+    : "";
+
+  return `Tu es Max Piccinini — ou plutôt son Clone IA, entraîné avec ses méthodes, sa façon de penser et son énergie.
+
+Max Piccinini est :
+- Entrepreneur à succès (15M€ CA, 5M€ bénéfice)
+- Coach business de référence en France (160 000+ clients dans 25 pays)
+- Auteur Best-seller "Réussite Maximum"
+- Direct, percutant, chaleureux — il dit la vérité même quand ça fait mal
+
+TON RÔLE DE COACH :
+Tu ne donnes JAMAIS la réponse directement. Tu es un coach, pas un consultant.
+Ton job est d'amener la personne à TROUVER elle-même la solution — en posant les bonnes questions, en challengeant ses croyances limitantes, en lui faisant prendre conscience de ce qu'elle ne voit pas.
+
+PRINCIPES DE COACHING :
+1. Pose 1 à 2 questions puissantes qui font réfléchir — jamais plus
+2. Challenge les suppositions : "Pourquoi tu penses ça ?"
+3. Utilise le vocabulaire de Max : "C'est un game changer", "passer au niveau supérieur", "turbo intérieur", "les amateurs supposent les pros mesurent"
+4. Si pertinent, mentionne un concept de Max sans tout expliquer — donne envie d'aller plus loin
+5. Sois direct et honnête, pas complaisant — Max dit la vérité
+6. Tutoie toujours l'entrepreneur
+
+LONGUEUR DES RÉPONSES :
+- Maximum 3-4 phrases + 1-2 questions
+- Pas de listes, pas de bullet points — c'est une conversation authentique
+- Pas de "En tant que coach..." ou "Je vais t'aider..." — commence directement avec le fond
+
+CE QUE TU NE FAIS JAMAIS :
+- Donner un plan d'action complet
+- Expliquer en détail une méthode ou stratégie
+- Faire un cours
+- Répondre à la question comme le ferait un consultant
+
+${profilContext}
+${knowledgeSection}
+${ctaInstruction}
+
+Format de la session stratégique : https://calendly.com/maxpiccinini — gratuit, 30 min, sans engagement.`;
+}
+
+// ─── Handler principal ────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,47 +178,106 @@ export async function POST(req: NextRequest) {
       };
     };
 
-    const { sessionId, message, history, profil } = body;
+    const { message, history, profil } = body;
 
     if (!message?.trim()) {
       return NextResponse.json({ error: "Message requis" }, { status: 400 });
     }
 
-    // Appel N8N si webhook configuré
-    if (N8N_CHAT_WEBHOOK) {
-      try {
-        const res = await fetch(N8N_CHAT_WEBHOOK, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            message,
-            history: history.slice(-10), // 10 derniers messages pour le contexte
-            profil,
-          }),
-          signal: AbortSignal.timeout(15000),
-        });
+    // 1. Recherche dans la base de connaissances Pinecone
+    const knowledgeResults = await searchKnowledgeBase(message);
+    const knowledgeContext = knowledgeResults
+      .map((r) => {
+        const parts = [r.titre && `Cours : ${r.titre}`, r.text || r.description].filter(Boolean);
+        return parts.join(" — ");
+      })
+      .join("\n");
 
-        if (res.ok) {
-          const data = await res.json() as { reply?: string; message?: string; output?: string };
-          const reply = data.reply ?? data.message ?? data.output;
-          if (reply) {
-            return NextResponse.json({ reply });
-          }
-        }
-      } catch {
-        // N8N timeout ou erreur — fallback statique
-      }
+    // 2. Détection free info seeking
+    const shouldCta = detectFreeInfoSeeking(history);
+
+    // 3. Construire le system prompt
+    const systemPrompt = buildSystemPrompt(profil, knowledgeContext, shouldCta);
+
+    // 4. Construire les messages pour Anthropic
+    const messages: { role: "user" | "assistant"; content: string }[] = [
+      // Historique des 10 derniers messages (excl. le message d'accueil initial)
+      ...history
+        .slice(-10)
+        .filter((m) => m.content.trim())
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+      // Message actuel
+      { role: "user" as const, content: message.trim() },
+    ];
+
+    // 5. Appel Anthropic
+    if (!ANTHROPIC_KEY) {
+      return NextResponse.json({ reply: getFallbackReply(message) });
     }
 
-    // Fallback statique
-    const reply = getStaticFallback();
+    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5",
+        max_tokens: 600,
+        system: systemPrompt,
+        messages,
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+
+    if (!anthropicRes.ok) {
+      const err = await anthropicRes.text();
+      console.error("Anthropic error:", err);
+      return NextResponse.json({ reply: getFallbackReply(message) });
+    }
+
+    const anthropicData = await anthropicRes.json() as {
+      content: { type: string; text: string }[];
+    };
+
+    let reply = anthropicData.content
+      .filter((c) => c.type === "text")
+      .map((c) => c.text)
+      .join("")
+      .trim();
+
+    // Nettoyer les em-dashes mal encodés
+    reply = reply.replace(/â€"/g, "—").replace(/â€™/g, "'").replace(/â€˜/g, "'");
+
     return NextResponse.json({ reply });
 
-  } catch {
+  } catch (err) {
+    console.error("Chat API error:", err);
     return NextResponse.json(
-      { error: "Erreur serveur" },
+      { reply: "Une erreur est survenue. Vérifie ta connexion et réessaie." },
       { status: 500 }
     );
   }
+}
+
+// ─── Fallback si pas de clé Anthropic ────────────────────────────────────────
+
+const FALLBACK_REPLIES = [
+  "Bonne question. Avant que je te réponde, dis-moi : qu'est-ce que tu as déjà essayé sur ce sujet ? Et pourquoi ça n'a pas marché selon toi ?",
+  "Je te retourne la question : qu'est-ce qui te retient vraiment ? Parce que souvent, le vrai frein n'est pas là où on croit qu'il est.",
+  "Intéressant. Et si je te disais que 80% des entrepreneurs qui stagnent sur ce point ont le même angle mort — tu penses que tu en fais partie ?",
+  "Ce que tu décris, je l'entends souvent. La vraie question c'est : est-ce que tu es prêt à faire ce qui est nécessaire, même si ça te sort de ta zone de confort ?",
+  "Avant d'aller plus loin sur ta question, dis-moi : c'est quoi l'impact concret sur ton business si tu ne règles pas ça dans les 90 prochains jours ?",
+];
+
+function getFallbackReply(message: string): string {
+  // Fallback contextuel si "session stratégique" semble pertinent
+  if (message.toLowerCase().includes("comment") && message.length > 80) {
+    return "Je pourrais te donner une réponse générale — mais ça ne t'aiderait pas vraiment. Ce qui changerait tout, c'est qu'on analyse ta situation spécifiquement. Tu as pensé à réserver une session stratégique offerte ? 30 minutes avec mon équipe, on identifie exactement ce qui bloque chez toi. → https://calendly.com/maxpiccinini";
+  }
+  return FALLBACK_REPLIES[Math.floor(Math.random() * FALLBACK_REPLIES.length)];
 }

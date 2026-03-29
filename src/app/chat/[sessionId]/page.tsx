@@ -49,6 +49,31 @@ function TypingIndicator() {
   );
 }
 
+// Détecte si le message contient un lien Calendly → affiche une CTA card
+function extractCtaUrl(content: string): string | null {
+  const match = content.match(/https:\/\/calendly\.com\/[^\s)]+/);
+  return match ? match[0] : null;
+}
+
+function stripCtaUrl(content: string): string {
+  return content.replace(/→?\s*https:\/\/calendly\.com\/[^\s)]+/, "").trim();
+}
+
+function CtaCard() {
+  return (
+    <a
+      href="https://calendly.com/maxpiccinini"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 block bg-[#000D2B] rounded-xl p-4 hover:bg-[#001144] transition-all"
+    >
+      <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-1">Session offerte</p>
+      <p className="text-white font-black text-sm mb-2">Réserver 30 min avec l&apos;équipe →</p>
+      <p className="text-white/60 text-xs">Gratuit · Sans engagement · Analyse de votre situation</p>
+    </a>
+  );
+}
+
 function ChatBubble({ msg }: { msg: MessageBubble }) {
   const isUser = msg.role === "user";
 
@@ -66,13 +91,19 @@ function ChatBubble({ msg }: { msg: MessageBubble }) {
     );
   }
 
+  const ctaUrl = extractCtaUrl(msg.content);
+  const displayContent = ctaUrl ? stripCtaUrl(msg.content) : msg.content;
+
   return (
     <div className="flex gap-3 mb-4">
       <div className="w-8 h-8 rounded-full bg-[#0046FF] flex-shrink-0 flex items-center justify-center text-white font-black text-xs mt-0.5">
         M
       </div>
-      <div className="max-w-[85%] bg-white border border-[#E2E4EA] rounded-2xl rounded-tl-none px-4 py-3 shadow-sm text-sm text-[#0A0A0F] leading-relaxed whitespace-pre-wrap">
-        {msg.content}
+      <div className="max-w-[85%]">
+        <div className="bg-white border border-[#E2E4EA] rounded-2xl rounded-tl-none px-4 py-3 shadow-sm text-sm text-[#0A0A0F] leading-relaxed whitespace-pre-wrap">
+          {displayContent}
+        </div>
+        {ctaUrl && <CtaCard />}
       </div>
     </div>
   );
@@ -81,10 +112,10 @@ function ChatBubble({ msg }: { msg: MessageBubble }) {
 // ─── Suggestions rapides ──────────────────────────────────────────────────────
 
 const QUICK_SUGGESTIONS = [
-  "Comment augmenter mon CA rapidement ?",
-  "Quelles sont mes priorités pour ce mois ?",
-  "Comment améliorer ma rentabilité ?",
-  "Par où commencer pour déléguer ?",
+  "Je stagne depuis 3 mois, je ne sais plus quoi faire.",
+  "J'ai du mal à trouver des clients régulièrement.",
+  "Mon équipe ne performe pas comme je le voudrais.",
+  "Je travaille trop pour ce que je gagne.",
 ];
 
 // ─── Page principale ──────────────────────────────────────────────────────────
