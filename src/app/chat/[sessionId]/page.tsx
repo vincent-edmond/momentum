@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { getSession, getChatHistory, saveChatMessage } from "@/lib/session";
+import { getSession, getSessionAsync, getChatHistory, saveChatMessage } from "@/lib/session";
 import { AppLayout } from "@/components/layout/AppLayout";
 import type { SessionData, ChatMessage } from "@/lib/types";
 
@@ -135,25 +135,28 @@ export default function ChatPage() {
 
   // Chargement initial
   useEffect(() => {
-    const s = getSession(sessionId);
-    if (!s) return;
-    setSession(s);
+    const init = async () => {
+      const s = getSession(sessionId) ?? await getSessionAsync(sessionId);
+      if (!s) return;
+      setSession(s);
 
-    // Charger l'historique persisté
-    const history = getChatHistory(sessionId);
-    if (history.length > 0) {
-      setMessages(history.map((m) => ({ ...m, loading: false })));
-    } else {
-      // Message d'accueil généré à la première visite
-      const welcome: MessageBubble = {
-        role: "assistant",
-        content: buildWelcomeMessage(s),
-        timestamp: new Date().toISOString(),
-      };
-      setMessages([welcome]);
-      saveChatMessage(sessionId, { role: "assistant", content: welcome.content, timestamp: welcome.timestamp });
-    }
-    setInitialized(true);
+      // Charger l'historique persisté
+      const history = getChatHistory(sessionId);
+      if (history.length > 0) {
+        setMessages(history.map((m) => ({ ...m, loading: false })));
+      } else {
+        // Message d'accueil généré à la première visite
+        const welcome: MessageBubble = {
+          role: "assistant",
+          content: buildWelcomeMessage(s),
+          timestamp: new Date().toISOString(),
+        };
+        setMessages([welcome]);
+        saveChatMessage(sessionId, { role: "assistant", content: welcome.content, timestamp: welcome.timestamp });
+      }
+      setInitialized(true);
+    };
+    init();
   }, [sessionId]);
 
   // Scroll auto vers le bas

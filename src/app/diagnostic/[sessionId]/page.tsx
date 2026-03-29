@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { getSession } from "@/lib/session";
+import { getSession, getSessionAsync } from "@/lib/session";
 import { getDiagnosticEtChemins } from "@/lib/personalisation";
 import { DiagnosticBloc } from "@/components/diagnostic/DiagnosticBloc";
 import { CheminCard } from "@/components/diagnostic/CheminCard";
@@ -29,7 +29,7 @@ export default function DiagnosticPage() {
 
   useEffect(() => {
     const load = async () => {
-      const s = getSession(sessionId);
+      const s = getSession(sessionId) ?? await getSessionAsync(sessionId);
       if (!s) return;
       setSession(s);
 

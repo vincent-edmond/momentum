@@ -37,7 +37,6 @@ export function CheminCard({ plan, index, sessionId, visible }: CheminCardProps)
 
   function handleChoose() {
     if (plan.rdv) {
-      // TODO: remplacer par le lien Calendly réel
       window.open("https://calendly.com/maxpiccinini", "_blank");
       return;
     }

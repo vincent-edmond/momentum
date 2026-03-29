@@ -5,9 +5,11 @@ import Link from "next/link";
 import type { SessionData, Progression } from "@/lib/types";
 
 interface SidebarProps {
-  session: SessionData;
+  session?: SessionData | null;
   progression?: Progression | null;
-  sessionId: string;
+  sessionId?: string;
+  locked?: boolean;
+  prenomOnboarding?: string;
 }
 
 const NAV_ITEMS = [
@@ -68,10 +70,19 @@ const FREIN_LABELS: Record<string, string> = {
   "Systèmes & organisation": "Systèmes",
 };
 
-export function Sidebar({ session, progression, sessionId }: SidebarProps) {
+const LockIcon = () => (
+  <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+    />
+  </svg>
+);
+
+export function Sidebar({ session, progression, sessionId, locked = false, prenomOnboarding }: SidebarProps) {
   const pathname = usePathname();
 
   function isActive(key: string) {
+    if (locked) return false;
     if (key === "dashboard") return pathname.includes("/dashboard");
     if (key === "guide-ca") return pathname.includes("/guide-ca");
     if (key === "guide-trso") return pathname.includes("/guide-trso");
@@ -79,7 +90,13 @@ export function Sidebar({ session, progression, sessionId }: SidebarProps) {
     return false;
   }
 
-  const score = progression?.score ?? 0;
+  const score = locked ? 0 : (progression?.score ?? 0);
+  const displayPrenom = locked
+    ? (prenomOnboarding?.trim() || "—")
+    : (session?.prenom ?? "—");
+  const displayFrein = locked
+    ? "Profil en cours…"
+    : (FREIN_LABELS[session?.frein ?? ""] ?? session?.frein ?? "");
 
   return (
     <aside className="hidden md:flex flex-col w-60 bg-[#000D2B] min-h-screen fixed left-0 top-0 z-30">
@@ -92,12 +109,16 @@ export function Sidebar({ session, progression, sessionId }: SidebarProps) {
       {/* Profil utilisateur */}
       <div className="px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-full bg-[#0046FF] flex items-center justify-center text-white font-black text-sm flex-shrink-0">
-            {session.prenom[0].toUpperCase()}
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0 ${
+            locked ? "bg-white/10 text-white/30" : "bg-[#0046FF] text-white"
+          }`}>
+            {displayPrenom !== "—" ? displayPrenom[0].toUpperCase() : "?"}
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm truncate">{session.prenom}</p>
-            <p className="text-white/40 text-xs truncate">{FREIN_LABELS[session.frein] ?? session.frein}</p>
+            <p className={`font-bold text-sm truncate ${locked && !prenomOnboarding ? "text-white/30" : "text-white"}`}>
+              {displayPrenom}
+            </p>
+            <p className="text-white/30 text-xs truncate">{displayFrein}</p>
           </div>
         </div>
 
@@ -105,11 +126,11 @@ export function Sidebar({ session, progression, sessionId }: SidebarProps) {
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="text-white/40">Progression</span>
-            <span className="text-[#0046FF] font-bold">{score}%</span>
+            <span className={`font-bold ${locked ? "text-white/30" : "text-[#0046FF]"}`}>{score}%</span>
           </div>
           <div className="h-1 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0046FF] rounded-full transition-all duration-500"
+              className={`h-full rounded-full transition-all duration-500 ${locked ? "bg-white/20" : "bg-[#0046FF]"}`}
               style={{ width: `${score}%` }}
             />
           </div>
@@ -118,23 +139,49 @@ export function Sidebar({ session, progression, sessionId }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(item.key);
-          return (
-            <Link
-              key={item.key}
-              href={item.href(sessionId)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                active
-                  ? "bg-[#0046FF] text-white"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
+        {locked ? (
+          /* ── Mode verrouillé : items non-cliquables ── */
+          <>
+            {NAV_ITEMS.map((item) => (
+              <div
+                key={item.key}
+                title="Complète ton profil pour accéder à cette section"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-white/20 cursor-not-allowed select-none"
+              >
+                <div className="flex items-center gap-3">
+                  {item.icon}
+                  {item.label}
+                </div>
+                <LockIcon />
+              </div>
+            ))}
+            {/* Message d'onboarding */}
+            <div className="mt-4 px-3 py-3 rounded-xl bg-white/5 border border-white/10">
+              <p className="text-white/40 text-xs leading-relaxed">
+                Complète ton profil pour débloquer ton espace personnalisé.
+              </p>
+            </div>
+          </>
+        ) : (
+          /* ── Mode normal : items cliquables ── */
+          NAV_ITEMS.map((item) => {
+            const active = isActive(item.key);
+            return (
+              <Link
+                key={item.key}
+                href={item.href(sessionId ?? "")}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  active
+                    ? "bg-[#0046FF] text-white"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            );
+          })
+        )}
       </nav>
 
       {/* CTA bas */}
@@ -154,30 +201,37 @@ export function Sidebar({ session, progression, sessionId }: SidebarProps) {
 }
 
 /* ── Mobile top bar (visible sur mobile à la place du sidebar) ── */
-export function MobileTopBar({ session, sessionId }: { session: SessionData; sessionId: string }) {
+export function MobileTopBar({ session, sessionId, locked = false }: { session?: SessionData | null; sessionId?: string; locked?: boolean }) {
   const pathname = usePathname();
 
   return (
     <header className="md:hidden sticky top-0 z-20 bg-[#000D2B] border-b border-white/10 px-4 py-3">
       <div className="flex items-center justify-between">
         <span className="text-white font-black text-base tracking-tight">MOMENTUM</span>
-        <div className="flex items-center gap-1">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname.includes(item.key === "dashboard" ? "/dashboard" : `/${item.key}`);
-            return (
-              <Link
-                key={item.key}
-                href={item.href(sessionId)}
-                className={`p-2 rounded-lg transition-all ${
-                  active ? "bg-[#0046FF] text-white" : "text-white/50 hover:text-white"
-                }`}
-                title={item.label}
-              >
-                {item.icon}
-              </Link>
-            );
-          })}
-        </div>
+        {locked ? (
+          <div className="flex items-center gap-1.5 text-white/30 text-xs">
+            <LockIcon />
+            <span>Complète ton profil</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1">
+            {NAV_ITEMS.map((item) => {
+              const active = pathname.includes(item.key === "dashboard" ? "/dashboard" : `/${item.key}`);
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href(sessionId ?? "")}
+                  className={`p-2 rounded-lg transition-all ${
+                    active ? "bg-[#0046FF] text-white" : "text-white/50 hover:text-white"
+                  }`}
+                  title={item.label}
+                >
+                  {item.icon}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </header>
   );

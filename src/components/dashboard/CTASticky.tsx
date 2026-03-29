@@ -16,7 +16,6 @@ export function CTASticky({ prenom }: CTAStickyProps) {
             Un expert analyse ton dossier gratuitement en 30 min.
           </p>
         </div>
-        {/* TODO: remplacer href par le lien Calendly réel */}
         <a
           href="https://calendly.com/maxpiccinini"
           target="_blank"

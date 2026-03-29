@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import {
   getSession,
+  getSessionAsync,
   getProgression,
+  getProgressionAsync,
   saveProgression,
   updateProgression,
 } from "@/lib/session";
@@ -168,7 +170,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const load = async () => {
-      const s = getSession(sessionId);
+      // Essaie localStorage d'abord, puis serveur si autre device
+      const s = getSession(sessionId) ?? await getSessionAsync(sessionId);
       if (!s) {
         setLoading(false);
         return;
@@ -178,7 +181,7 @@ export default function DashboardPage() {
       const r = await personalise(s, planNum, sessionId);
       setResult(r);
 
-      let prog = getProgression(sessionId);
+      let prog = getProgression(sessionId) ?? await getProgressionAsync(sessionId);
       if (!prog) {
         prog = saveProgression(sessionId, planNum);
       }
