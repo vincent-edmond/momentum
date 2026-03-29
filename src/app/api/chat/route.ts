@@ -215,29 +215,7 @@ export async function POST(req: NextRequest) {
       userMessage = `Contexte de la conversation :\n${historyText}\n\nQuestion actuelle : ${message.trim()}`;
     }
 
-    // 5. Appel Make.com → OpenAI gpt-4o-mini (clé API stockée dans Make.com)
-    try {
-      const makeRes = await fetch(MAKE_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ systemPrompt, userMessage }),
-        signal: AbortSignal.timeout(25000),
-      });
-
-      if (makeRes.ok) {
-        const rawReply = (await makeRes.text()).trim();
-        if (rawReply && !rawReply.toLowerCase().startsWith("scenario failed")) {
-          return NextResponse.json({ reply: rawReply });
-        }
-        console.error("Make.com: réponse vide ou erreur");
-      } else {
-        console.error("Make.com HTTP error:", makeRes.status);
-      }
-    } catch (makeErr) {
-      console.error("Make.com fetch error:", makeErr);
-    }
-
-    // 6. Fallback Anthropic (si clé disponible + crédits suffisants)
+    // 5. Appel Anthropic claude-sonnet (primaire — meilleure qualité)
     if (ANTHROPIC_KEY) {
       try {
         const anthropicMessages = recentHistory
@@ -255,7 +233,7 @@ export async function POST(req: NextRequest) {
             model: "claude-sonnet-4-5",
             max_tokens: 600,
             system: systemPrompt,
-            messages: anthropicMessages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            messages: anthropicMessages,
           }),
           signal: AbortSignal.timeout(20000),
         });
@@ -276,6 +254,28 @@ export async function POST(req: NextRequest) {
       } catch (anthropicErr) {
         console.error("Anthropic fetch error:", anthropicErr);
       }
+    }
+
+    // 6. Fallback Make.com → OpenAI gpt-4o-mini (si Anthropic indisponible)
+    try {
+      const makeRes = await fetch(MAKE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ systemPrompt, userMessage }),
+        signal: AbortSignal.timeout(25000),
+      });
+
+      if (makeRes.ok) {
+        const rawReply = (await makeRes.text()).trim();
+        if (rawReply && !rawReply.toLowerCase().startsWith("scenario failed")) {
+          return NextResponse.json({ reply: rawReply });
+        }
+        console.error("Make.com: réponse vide ou erreur");
+      } else {
+        console.error("Make.com HTTP error:", makeRes.status);
+      }
+    } catch (makeErr) {
+      console.error("Make.com fetch error:", makeErr);
     }
 
     // 7. Dernier recours — réponse de coaching statique
