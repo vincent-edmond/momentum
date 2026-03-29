@@ -3,15 +3,19 @@ import type { ChatMessage } from "@/lib/types";
 
 /**
  * POST /api/chat
- * Coach IA Max Piccinini — Pipeline direct (Anthropic + Pinecone)
+ * Coach IA Max Piccinini — Pipeline Make.com → OpenAI gpt-4o-mini
  *
  * Logique de coaching :
- * 1. Recherche sémantique dans la base Pinecone (cours + témoignages)
- * 2. Appel Anthropic avec persona Max Piccinini Coach Business
- * 3. Jamais de réponse directe — questions de coaching pour faire avancer
- * 4. Détection "cherche info gratuite" → CTA session stratégique après 5+ questions
+ * 1. Recherche sémantique dans la base Pinecone (si clés dispo)
+ * 2. Appel Make.com webhook → OpenAI gpt-4o-mini (clé stockée dans Make.com)
+ * 3. Fallback Anthropic si clé dispo + crédits
+ * 4. Jamais de réponse directe — questions de coaching pour faire avancer
+ * 5. Détection "cherche info gratuite" → CTA session stratégique après 5+ questions
  */
 
+// ─── Config ──────────────────────────────────────────────────────────────────
+
+const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/o2p67pso7u4orj31dj7xo3enblf2545s";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? "";
 const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 const PINECONE_KEY = process.env.PINECONE_API_KEY ?? "";
@@ -76,14 +80,13 @@ function detectFreeInfoSeeking(history: ChatMessage[]): boolean {
   const userMessages = history.filter((m) => m.role === "user");
   if (userMessages.length < 5) return false;
 
-  // Patterns qui indiquent une recherche d'info gratuite intensive
   const infoSeekingPatterns = [
     /comment (faire|faire pour|on fait|je dois|il faut)/i,
     /donne[z]?[\s-]moi/i,
     /expliqu[e|ez]/i,
     /qu[e']est[\s-]ce que/i,
     /c[']est quoi/i,
-    /\?.*\?/,  // double question
+    /\?.*\?/,
   ];
 
   const recentMessages = userMessages.slice(-5);
@@ -184,7 +187,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message requis" }, { status: 400 });
     }
 
-    // 1. Recherche dans la base de connaissances Pinecone
+    // 1. Recherche dans la base de connaissances Pinecone (si clés disponibles)
     const knowledgeResults = await searchKnowledgeBase(message);
     const knowledgeContext = knowledgeResults
       .map((r) => {
@@ -199,61 +202,84 @@ export async function POST(req: NextRequest) {
     // 3. Construire le system prompt
     const systemPrompt = buildSystemPrompt(profil, knowledgeContext, shouldCta);
 
-    // 4. Construire les messages pour Anthropic
-    const messages: { role: "user" | "assistant"; content: string }[] = [
-      // Historique des 10 derniers messages (excl. le message d'accueil initial)
-      ...history
-        .slice(-10)
-        .filter((m) => m.content.trim())
-        .map((m) => ({
-          role: m.role as "user" | "assistant",
-          content: m.content,
-        })),
-      // Message actuel
-      { role: "user" as const, content: message.trim() },
-    ];
+    // 4. Construire le userMessage avec historique de conversation
+    const recentHistory = history
+      .slice(-10)
+      .filter((m) => m.content.trim());
 
-    // 5. Appel Anthropic
-    if (!ANTHROPIC_KEY) {
-      return NextResponse.json({ reply: getFallbackReply(message) });
+    let userMessage = message.trim();
+    if (recentHistory.length > 0) {
+      const historyText = recentHistory
+        .map((m) => `${m.role === "user" ? "Entrepreneur" : "Coach Max"} : ${m.content}`)
+        .join("\n");
+      userMessage = `Contexte de la conversation :\n${historyText}\n\nQuestion actuelle : ${message.trim()}`;
     }
 
-    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": ANTHROPIC_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 600,
-        system: systemPrompt,
-        messages,
-      }),
-      signal: AbortSignal.timeout(20000),
-    });
+    // 5. Appel Make.com → OpenAI gpt-4o-mini (clé API stockée dans Make.com)
+    try {
+      const makeRes = await fetch(MAKE_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ systemPrompt, userMessage }),
+        signal: AbortSignal.timeout(25000),
+      });
 
-    if (!anthropicRes.ok) {
-      const err = await anthropicRes.text();
-      console.error("Anthropic error:", err);
-      return NextResponse.json({ reply: getFallbackReply(message) });
+      if (makeRes.ok) {
+        const rawReply = (await makeRes.text()).trim();
+        if (rawReply && !rawReply.toLowerCase().startsWith("scenario failed")) {
+          return NextResponse.json({ reply: rawReply });
+        }
+        console.error("Make.com: réponse vide ou erreur");
+      } else {
+        console.error("Make.com HTTP error:", makeRes.status);
+      }
+    } catch (makeErr) {
+      console.error("Make.com fetch error:", makeErr);
     }
 
-    const anthropicData = await anthropicRes.json() as {
-      content: { type: string; text: string }[];
-    };
+    // 6. Fallback Anthropic (si clé disponible + crédits suffisants)
+    if (ANTHROPIC_KEY) {
+      try {
+        const anthropicMessages = recentHistory
+          .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }))
+          .concat([{ role: "user" as const, content: message.trim() }]);
 
-    let reply = anthropicData.content
-      .filter((c) => c.type === "text")
-      .map((c) => c.text)
-      .join("")
-      .trim();
+        const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "x-api-key": ANTHROPIC_KEY,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-5",
+            max_tokens: 600,
+            system: systemPrompt,
+            messages: anthropicMessages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+          }),
+          signal: AbortSignal.timeout(20000),
+        });
 
-    // Nettoyer les em-dashes mal encodés
-    reply = reply.replace(/â€"/g, "—").replace(/â€™/g, "'").replace(/â€˜/g, "'");
+        if (anthropicRes.ok) {
+          const anthropicData = await anthropicRes.json() as {
+            content: { type: string; text: string }[];
+          };
+          let reply = anthropicData.content
+            .filter((c) => c.type === "text")
+            .map((c) => c.text)
+            .join("")
+            .trim();
+          reply = reply.replace(/â€"/g, "—").replace(/â€™/g, "'").replace(/â€˜/g, "'");
+          return NextResponse.json({ reply });
+        }
+        console.error("Anthropic error:", anthropicRes.status);
+      } catch (anthropicErr) {
+        console.error("Anthropic fetch error:", anthropicErr);
+      }
+    }
 
-    return NextResponse.json({ reply });
+    // 7. Dernier recours — réponse de coaching statique
+    return NextResponse.json({ reply: getFallbackReply(message) });
 
   } catch (err) {
     console.error("Chat API error:", err);
@@ -264,7 +290,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ─── Fallback si pas de clé Anthropic ────────────────────────────────────────
+// ─── Fallback coaching ────────────────────────────────────────────────────────
 
 const FALLBACK_REPLIES = [
   "Bonne question. Avant que je te réponde, dis-moi : qu'est-ce que tu as déjà essayé sur ce sujet ? Et pourquoi ça n'a pas marché selon toi ?",
@@ -275,7 +301,6 @@ const FALLBACK_REPLIES = [
 ];
 
 function getFallbackReply(message: string): string {
-  // Fallback contextuel si "session stratégique" semble pertinent
   if (message.toLowerCase().includes("comment") && message.length > 80) {
     return "Je pourrais te donner une réponse générale — mais ça ne t'aiderait pas vraiment. Ce qui changerait tout, c'est qu'on analyse ta situation spécifiquement. Tu as pensé à réserver une session stratégique offerte ? 30 minutes avec mon équipe, on identifie exactement ce qui bloque chez toi. → https://calendly.com/maxpiccinini";
   }
