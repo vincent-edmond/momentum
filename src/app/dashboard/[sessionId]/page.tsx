@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import {
   getSession,
@@ -154,7 +154,7 @@ const PLAN_COLORS: Record<string, { badge: string; ring: string }> = {
 
 // ─── Page principale ──────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
+function DashboardContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const sessionId = params.sessionId as string;
@@ -396,5 +396,21 @@ export default function DashboardPage() {
         <CTASticky prenom={session.prenom} />
       </div>
     </AppLayout>
+  );
+}
+
+// ─── Export avec Suspense (requis par useSearchParams en App Router) ───────────
+
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-[#0046FF] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }

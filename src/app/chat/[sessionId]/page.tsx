@@ -247,7 +247,7 @@ export default function ChatPage() {
 
   return (
     <AppLayout session={session} sessionId={sessionId}>
-      <div className="flex flex-col h-screen bg-[#F7F8FA]">
+      <div className="flex flex-col flex-1 min-h-0 bg-[#F7F8FA]">
 
         {/* Header chat */}
         <div className="bg-white border-b border-[#E2E4EA] px-4 py-3 flex items-center gap-3 flex-shrink-0">

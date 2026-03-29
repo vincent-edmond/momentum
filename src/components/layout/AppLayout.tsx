@@ -22,7 +22,7 @@ export function AppLayout({ session, sessionId, progression, children }: AppLayo
         <MobileTopBar session={session} sessionId={sessionId} />
 
         {/* Page content */}
-        <main className="flex-1">
+        <main className="flex-1 flex flex-col min-h-0">
           {children}
         </main>
       </div>
