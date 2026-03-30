@@ -1,13 +1,16 @@
 import { SignIn } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col items-center px-4 pt-10 pb-12">
       {/* Header branding */}
-      <div className="text-center mb-8">
-        <span className="text-[#0046FF] font-black text-2xl tracking-tight">MOMENTUM</span>
+      <div className="text-center mb-7">
+        <Link href="/">
+          <span className="text-[#0046FF] font-black text-2xl tracking-tight">MOMENTUM</span>
+        </Link>
         <p className="text-[#9096A5] text-sm mt-1">par Max Piccinini</p>
-        <p className="text-[#0A0A0F] font-semibold text-base mt-4">
+        <p className="text-[#0A0A0F] font-semibold text-base mt-3">
           Accède à ton espace personnalisé
         </p>
       </div>
@@ -30,6 +33,11 @@ export default function SignInPage() {
           },
         }}
       />
+
+      {/* Note mode dev Clerk */}
+      <p className="text-[#9096A5] text-xs text-center mt-5 max-w-xs">
+        Si Google ne fonctionne pas sur mobile, utilise l&apos;email + mot de passe ci-dessus.
+      </p>
     </div>
   );
 }

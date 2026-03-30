@@ -2,18 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { getSession, getSessionAsync } from "@/lib/session";
+import { getSession, getSessionAsync, getProgression, getProgressionAsync } from "@/lib/session";
 import { getDiagnosticEtChemins } from "@/lib/personalisation";
 import { DiagnosticBloc } from "@/components/diagnostic/DiagnosticBloc";
 import { CheminCard } from "@/components/diagnostic/CheminCard";
 import { DiagnosticLoading } from "@/components/diagnostic/DiagnosticLoading";
-import type { SessionData, Chemin, DiagnosticPoints } from "@/lib/types";
+import { AppLayout } from "@/components/layout/AppLayout";
+import type { SessionData, Chemin, DiagnosticPoints, Progression } from "@/lib/types";
 
 export default function DiagnosticPage() {
   const params = useParams();
   const sessionId = params.sessionId as string;
 
   const [session, setSession] = useState<SessionData | null>(null);
+  const [progression, setProgression] = useState<Progression | null>(null);
   const [diagnostic, setDiagnostic] = useState<DiagnosticPoints | null>(null);
   const [chemins, setChemins] = useState<{
     plan1: Chemin;
@@ -32,6 +34,9 @@ export default function DiagnosticPage() {
       const s = getSession(sessionId) ?? await getSessionAsync(sessionId);
       if (!s) return;
       setSession(s);
+
+      const prog = getProgression(sessionId) ?? await getProgressionAsync(sessionId);
+      setProgression(prog);
 
       const { diagnostic: diag, chemins: ch } = await getDiagnosticEtChemins(s);
       setDiagnostic(diag);
@@ -83,14 +88,9 @@ export default function DiagnosticPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#0A0A0F]">
-      {/* Header */}
-      <header className="bg-white border-b border-[#E2E4EA] px-4 py-5 flex items-center justify-between max-w-5xl mx-auto">
-        <span className="text-[#0046FF] font-black text-lg tracking-tight">MOMENTUM</span>
-        <span className="text-xs text-[#9096A5]">par Max Piccinini Coaching</span>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-4 pb-20">
+    <AppLayout session={session} sessionId={sessionId} progression={progression}>
+    <div className="min-h-screen bg-[#F7F8FA] text-[#0A0A0F] pb-24">
+      <main className="max-w-3xl mx-auto px-4">
         {/* Titre */}
         <div
           className={`pt-8 pb-12 transition-all duration-700 ${
@@ -155,5 +155,6 @@ export default function DiagnosticPage() {
         </div>
       </main>
     </div>
+    </AppLayout>
   );
 }

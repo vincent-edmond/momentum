@@ -135,9 +135,29 @@ export default function LandingPage() {
         .reveal-delay-3 { animation-delay: 0.3s; }
         .reveal-delay-4 { animation-delay: 0.4s; }
 
+        /* ── Nav ── */
+        .lp-nav {
+          position: sticky; top: 0; z-index: 101;
+          background: var(--navy-deep);
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+          padding: 12px 0;
+        }
+        .lp-nav-inner {
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .lp-nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; color: #fff; font-size: 17px; letter-spacing: 0.04em; text-decoration: none; }
+        .lp-nav-logo span { color: var(--blue); }
+        .lp-nav-signin {
+          display: inline-flex; align-items: center; gap: 6px;
+          color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+          text-decoration: none; border: 1px solid rgba(255,255,255,0.2);
+          border-radius: var(--radius-pill); padding: 8px 18px;
+          transition: all 0.2s ease;
+        }
+        .lp-nav-signin:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+
         /* ── Topbar ── */
         .topbar {
-          position: sticky; top: 0; z-index: 100;
           background: var(--blue);
           color: #fff;
           text-align: center;
@@ -423,6 +443,18 @@ export default function LandingPage() {
           .about-stats { grid-template-columns: 1fr 1fr; }
         }
       `}</style>
+
+      {/* ── NAV ── */}
+      <nav className="lp-nav">
+        <div className="container">
+          <div className="lp-nav-inner">
+            <span className="lp-nav-logo">MOMENT<span>U</span>M</span>
+            <Link href={CTA_URL} className="lp-nav-signin">
+              Se connecter →
+            </Link>
+          </div>
+        </div>
+      </nav>
 
       {/* ── TOPBAR ── */}
       <div className="topbar">
