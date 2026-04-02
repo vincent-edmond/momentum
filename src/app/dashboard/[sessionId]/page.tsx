@@ -14,88 +14,13 @@ import { personalise } from "@/lib/personalisation";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { VideoCard } from "@/components/dashboard/VideoCard";
 import { TemoignageCard } from "@/components/dashboard/TemoignageCard";
-import { LectureCard } from "@/components/dashboard/LectureCard";
 import { ProgressionBar } from "@/components/dashboard/ProgressionBar";
-import { CTASticky } from "@/components/dashboard/CTASticky";
 import type {
   SessionData,
   Progression,
   PersonalisationResult,
-  Etape,
   Video,
 } from "@/lib/types";
-
-// ─── EtapeCard ────────────────────────────────────────────────────────────────
-
-const TYPE_ICON: Record<string, string> = {
-  video: "▶",
-  lecture: "📖",
-  action: "⚡",
-};
-
-const TYPE_LABEL: Record<string, string> = {
-  video: "Vidéo",
-  lecture: "Lecture",
-  action: "Action",
-};
-
-function EtapeCard({
-  etape,
-  index,
-  unlocked,
-  active,
-  done,
-  onClick,
-}: {
-  etape: Etape;
-  index: number;
-  unlocked: boolean;
-  active: boolean;
-  done: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <div
-      className={`relative flex gap-4 p-4 rounded-xl border transition-all ${
-        done
-          ? "bg-white border-[#E2E4EA] opacity-70"
-          : active
-          ? "bg-white border-[#0046FF]/40 cursor-pointer hover:border-[#0046FF]/60 shadow-sm"
-          : unlocked
-          ? "bg-white border-[#E2E4EA] cursor-pointer hover:border-[#D1D5E0] shadow-sm"
-          : "bg-[#F7F8FA] border-[#E2E4EA] cursor-not-allowed opacity-50"
-      }`}
-      onClick={unlocked ? onClick : undefined}
-    >
-      <div
-        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border ${
-          done
-            ? "bg-[#F0F1F5] border-[#E2E4EA] text-[#9096A5]"
-            : active
-            ? "bg-[#0046FF]/10 border-[#0046FF]/40 text-[#0046FF]"
-            : "bg-[#F0F1F5] border-[#E2E4EA] text-[#9096A5]"
-        }`}
-      >
-        {done ? "✓" : index + 1}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-semibold text-[#9096A5] uppercase tracking-wide">
-            {TYPE_ICON[etape.type]} {TYPE_LABEL[etape.type]}
-          </span>
-          {!unlocked && (
-            <span className="text-xs text-[#9096A5]">🔒 Verrouillé</span>
-          )}
-        </div>
-        <p className="text-[#0A0A0F] font-semibold text-sm">{etape.titre}</p>
-        <p className="text-[#555B6E] text-xs mt-1 leading-relaxed">
-          {etape.description}
-        </p>
-      </div>
-    </div>
-  );
-}
 
 // ─── VideoMiniCard (vidéo supplémentaire) ─────────────────────────────────────
 
@@ -170,6 +95,10 @@ function DashboardContent() {
 
   useEffect(() => {
     const load = async () => {
+      // Réinitialise l'état pour éviter d'afficher le contenu du plan précédent
+      setLoading(true);
+      setResult(null);
+
       // Essaie localStorage d'abord, puis serveur si autre device
       const s = getSession(sessionId) ?? await getSessionAsync(sessionId);
       if (!s) {
@@ -184,6 +113,8 @@ function DashboardContent() {
       let prog = getProgression(sessionId) ?? await getProgressionAsync(sessionId);
       if (!prog) {
         prog = saveProgression(sessionId, planNum);
+      } else if (prog.plan !== planNum) {
+        prog = updateProgression(sessionId, { plan: planNum }) ?? prog;
       }
       setProgression(prog);
       setLoading(false);
@@ -195,16 +126,6 @@ function DashboardContent() {
   function handleVideoWatched() {
     const updated = updateProgression(sessionId, { video_watched: true });
     if (updated) setProgression(updated);
-  }
-
-  function handleEtapeClick(index: number) {
-    if (!progression) return;
-    if (index <= progression.etape_courante) {
-      const updated = updateProgression(sessionId, {
-        etape_courante: index + 1,
-      });
-      if (updated) setProgression(updated);
-    }
   }
 
   if (loading) {
@@ -232,7 +153,6 @@ function DashboardContent() {
   const chemin = result.chemins[planKey];
   const planColor = PLAN_COLORS[String(planNum)];
   const videoWatched = progression.video_watched;
-  const etapeCourante = progression.etape_courante;
   const videosSupp = result.contenu.videos_supplementaires ?? [];
 
   return (
@@ -308,31 +228,26 @@ function DashboardContent() {
             </section>
           )}
 
-          {/* Plan d'action : étapes */}
-          {result.contenu.etapes.length > 0 && (
-            <section>
-              <h2 className="text-lg font-black text-[#0A0A0F] mb-4">
-                Ton plan d&apos;action
-              </h2>
-              <div className="space-y-3">
-                {result.contenu.etapes.map((etape, i) => {
-                  const done = i < etapeCourante;
-                  const active = i === etapeCourante;
-                  return (
-                    <EtapeCard
-                      key={i}
-                      etape={etape}
-                      index={i}
-                      unlocked={true}
-                      active={active}
-                      done={done}
-                      onClick={() => handleEtapeClick(i)}
-                    />
-                  );
-                })}
+          {/* Lien vers Mon plan d'action */}
+          <section>
+            <a
+              href={`/plan/${sessionId}`}
+              className="group flex items-center justify-between bg-white border-2 border-[#0046FF]/20 hover:border-[#0046FF]/50 rounded-2xl p-5 shadow-sm transition-all hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-[#0046FF]/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#0046FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[#0A0A0F] font-black text-sm">Mon plan d&apos;action</p>
+                  <p className="text-[#9096A5] text-xs mt-0.5">Consulte tes étapes concrètes et suis ta progression</p>
+                </div>
               </div>
-            </section>
-          )}
+              <span className="text-[#0046FF] font-black text-sm group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+          </section>
 
           {/* Témoignages */}
           {result.contenu.temoignages.length > 0 && (
@@ -377,21 +292,8 @@ function DashboardContent() {
             </p>
           </section>
 
-          {/* Lecture */}
-          {result.contenu.lecture && (
-            <section>
-              <h2 className="text-lg font-black text-[#0A0A0F] mb-4">
-                Approfondis ta réflexion
-              </h2>
-              <LectureCard
-                newsletter={result.contenu.lecture}
-                locked={false}
-              />
-            </section>
-          )}
         </main>
 
-        <CTASticky prenom={session.prenom} />
       </div>
     </AppLayout>
   );

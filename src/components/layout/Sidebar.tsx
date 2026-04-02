@@ -26,6 +26,18 @@ const NAV_ITEMS = [
     href: (id: string) => `/dashboard/${id}`,
   },
   {
+    key: "plan",
+    label: "Mon plan d'action",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+        />
+      </svg>
+    ),
+    href: (id: string) => `/plan/${id}`,
+  },
+  {
     key: "diagnostic",
     label: "Mon diagnostic",
     icon: (
@@ -38,28 +50,16 @@ const NAV_ITEMS = [
     href: (id: string) => `/diagnostic/${id}`,
   },
   {
-    key: "guide-ca",
-    label: "Guide CA",
+    key: "bibliotheque",
+    label: "Bibliothèque",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
         />
       </svg>
     ),
-    href: (id: string) => `/guide-ca?session=${id}`,
-  },
-  {
-    key: "guide-trso",
-    label: "Guide Tréso",
-    icon: (
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-        />
-      </svg>
-    ),
-    href: (id: string) => `/guide-trso?session=${id}`,
+    href: (id: string) => `/bibliotheque/${id}`,
   },
   {
     key: "chat",
@@ -96,9 +96,9 @@ export function Sidebar({ session, progression, sessionId, locked = false, preno
   function isActive(key: string) {
     if (locked) return false;
     if (key === "dashboard") return pathname.includes("/dashboard");
+    if (key === "plan") return pathname.includes("/plan/");
     if (key === "diagnostic") return pathname.includes("/diagnostic");
-    if (key === "guide-ca") return pathname.includes("/guide-ca");
-    if (key === "guide-trso") return pathname.includes("/guide-trso");
+    if (key === "bibliotheque") return pathname.includes("/bibliotheque") || pathname.includes("/guide-ca") || pathname.includes("/guide-trso");
     if (key === "chat") return pathname.includes("/chat");
     return false;
   }
@@ -179,10 +179,13 @@ export function Sidebar({ session, progression, sessionId, locked = false, preno
           /* ── Mode normal : items cliquables ── */
           NAV_ITEMS.map((item) => {
             const active = isActive(item.key);
+            const href = item.key === "dashboard" && progression?.plan
+              ? `/dashboard/${sessionId ?? ""}?plan=${progression.plan}`
+              : item.href(sessionId ?? "");
             return (
               <Link
                 key={item.key}
-                href={item.href(sessionId ?? "")}
+                href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   active
                     ? "bg-[#0046FF] text-white"
@@ -229,7 +232,10 @@ export function MobileTopBar({ session, sessionId, locked = false }: { session?:
         ) : (
           <div className="flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
-              const active = pathname.includes(item.key === "dashboard" ? "/dashboard" : `/${item.key}`);
+              const active =
+                item.key === "dashboard" ? pathname.includes("/dashboard") :
+                item.key === "bibliotheque" ? pathname.includes("/bibliotheque") || pathname.includes("/guide-ca") || pathname.includes("/guide-trso") :
+                pathname.includes(`/${item.key}`);
               return (
                 <Link
                   key={item.key}
@@ -243,6 +249,7 @@ export function MobileTopBar({ session, sessionId, locked = false }: { session?:
                 </Link>
               );
             })}
+
           </div>
         )}
       </div>
